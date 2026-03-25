@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neuro-Symbolic AI in 2026: Architectures, Evidence, and the LLM Reliability Shift</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&amp;family=IBM+Plex+Mono:wght@300;400;500&amp;family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+:root {
+  --ink: #0d0d0d;
+  --paper: #f5f0e8;
+  --cream: #ede7d3;
+  --rust: #b84a2e;
+  --gold: #c9952a;
+  --slate: #3a4a5c;
+  --steel: #566a78;
+  --pale: #f9f5ee;
+  --rule: rgba(13,13,13,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Libre Baskerville', serif;
+  --display: 'Playfair Display', serif;
+  /* Graph node colours */
+  --n-family:  #b84a2e;
+  --n-system:  #3a4a5c;
+  --n-concept: #c9952a;
+  --n-paper:   #6b7f8f;
+  --e-implements: #b84a2e;
+  --e-extends:    #c9952a;
+  --e-requires:   #3a4a5c;
+  --e-cites:      rgba(13,13,13,0.25);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body { background: var(--paper); color: var(--ink); font-family: var(--serif); line-height: 1.75; overflow-x: clip; }
+
+/* Noise */
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat:repeat; background-size:256px 256px; opacity:0.6;
+  contain: strict;
+}
+
+/* Masthead */
+.masthead { position:relative; z-index:10; border-bottom:2px solid var(--ink); padding:1rem 2.5rem; display:flex; align-items:center; justify-content:space-between; background:var(--paper); }
+.masthead-logo { font-family:var(--mono); font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--steel); }
+.masthead-logo span { color:var(--rust); }
+.masthead-nav { display:flex; gap:2rem; }
+.masthead-nav a { font-family:var(--mono); font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; color:var(--steel); transition:color 0.2s; }
+.masthead-nav a:hover { color:var(--rust); }
+
+/* Hero */
+.hero { position:relative; z-index:1; min-height:min(60vh, 560px); max-height:90vh; display:grid; grid-template-columns:1fr 1fr; border-bottom:2px solid var(--ink); overflow:hidden; }
+.hero-left { padding:6rem 4rem 4rem; border-right:1px solid var(--rule); display:flex; flex-direction:column; justify-content:space-between; }
+.hero-eyebrow { font-family:var(--mono); font-size:0.7rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--rust); margin-bottom:1.5rem; }
+.hero-title { font-family:var(--display); font-size:clamp(2.8rem,5vw,5rem); font-weight:900; line-height:1.05; letter-spacing:-0.02em; }
+.hero-title em { font-style:italic; color:var(--rust); }
+.hero-sub { margin-top:2rem; font-size:1rem; color:var(--slate); max-width:38ch; line-height:1.8; }
+.hero-summary {
+  margin-top:2rem;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:0.9rem;
+  max-width:44rem;
+}
+.hero-chip {
+  border:1px solid var(--rule);
+  background:rgba(249,245,238,0.9);
+  padding:0.9rem 1rem;
+}
+.hero-chip-label {
+  display:block;
+  font-family:var(--mono);
+  font-size:0.58rem;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--steel);
+  margin-bottom:0.35rem;
+}
+.hero-chip strong {
+  display:block;
+  font-family:var(--display);
+  font-size:1rem;
+  line-height:1.25;
+  color:var(--ink);
+}
+.hero-chip p {
+  margin:0.45rem 0 0;
+  font-size:0.82rem;
+  line-height:1.55;
+  color:var(--slate);
+}
+.btn-primary,
+.btn-secondary {
+  appearance:none;
+}
+.hero-ctas { display:flex; gap:1rem; margin-top:2rem; flex-wrap:wrap; }
+.btn-primary { display:inline-flex; align-items:center; gap:0.5rem; font-family:var(--mono); font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; background:var(--rust); color:#fff; padding:0.65rem 1.25rem; border:2px solid var(--rust); transition:background 0.2s,color 0.2s; cursor:pointer; }
+.btn-primary:hover { background:transparent; color:var(--rust); }
+.btn-secondary { display:inline-flex; align-items:center; gap:0.5rem; font-family:var(--mono); font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; background:transparent; color:var(--ink); padding:0.65rem 1.25rem; border:2px solid var(--ink); transition:background 0.2s,color 0.2s; cursor:pointer; }
+.btn-secondary:hover { background:var(--ink); color:var(--paper); }
+.hero-meta { display:flex; gap:2rem; font-family:var(--mono); font-size:0.65rem; letter-spacing:0.1em; color:var(--steel); flex-wrap:wrap; }
+.hero-meta span { text-transform:uppercase; }
+.hero-meta strong { color:var(--ink); }
+.hero-right { position:relative; display:flex; align-items:center; justify-content:center; padding:3rem; background:var(--cream); }
+
+/* Hero mini-graph */
+#hero-graph-svg { width:100%; max-width:520px; height:380px; display:block; cursor:grab; }
+#hero-graph-svg:active { cursor:grabbing; }
+
+/* Section scaffold */
+.section { position:relative; z-index:1; padding:5rem 4rem; max-width:1400px; margin:0 auto; }
+.section-label { font-family:var(--mono); font-size:0.65rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--steel); margin-bottom:0.75rem; }
+.section-number { font-family:var(--mono); font-size:0.65rem; color:var(--rule); margin-bottom:0.5rem; }
+.section-h2 { font-family:var(--display); font-size:clamp(1.8rem,3vw,2.8rem); font-weight:700; line-height:1.15; letter-spacing:-0.02em; margin-bottom:1.5rem; }
+.section-h2 em { font-style:italic; color:var(--rust); }
+.rule { border:none; border-top:1px solid var(--rule); margin:4rem 0; }
+.rule-thick { border:none; border-top:2px solid var(--ink); margin:0; }
+p { margin-bottom:1.25rem; font-size:0.98rem; }
+p:last-child { margin-bottom:0; }
+
+/* Pullquote */
+.pullquote { border-left:4px solid var(--rust); padding:1.25rem 1.75rem; margin:2rem 0; background:var(--cream); }
+.pullquote p { font-family:var(--display); font-style:italic; font-size:1.2rem; line-height:1.5; color:var(--slate); margin:0; }
+.pullquote cite { display:block; margin-top:0.75rem; font-family:var(--mono); font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--steel); font-style:normal; }
+
+/* Grid layouts */
+.section-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:start; }
+.section-grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:2.5rem; }
+
+/* Cards */
+.arch-card { border:1px solid var(--rule); padding:1.75rem; background:var(--pale); transition:border-color 0.2s,transform 0.2s; position:relative; overflow:hidden; }
+.arch-card::before { content:''; position:absolute; top:0; left:0; width:3px; height:0; background:var(--rust); transition:height 0.3s ease; }
+.arch-card:hover::before { height:100%; }
+.arch-card:hover { border-color:var(--rust); transform:translateY(-2px); }
+.arch-card-tag { font-family:var(--mono); font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:0.5rem; }
+.arch-card h3 { font-family:var(--display); font-size:1.1rem; font-weight:700; margin-bottom:0.75rem; line-height:1.3; }
+.arch-card p { font-size:0.88rem; color:var(--slate); margin:0; }
+.fit-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:1.25rem;
+  margin-top:2rem;
+}
+.fit-card {
+  border:1px solid var(--rule);
+  background:var(--pale);
+  padding:1.4rem 1.5rem;
+}
+.fit-card h3 {
+  font-family:var(--display);
+  font-size:1.15rem;
+  line-height:1.25;
+  margin-bottom:0.75rem;
+}
+.fit-tag {
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:0.58rem;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--steel);
+  margin-bottom:0.55rem;
+}
+.fit-list {
+  list-style:none;
+  margin:1rem 0 0;
+}
+.fit-list li {
+  font-size:0.88rem;
+  color:var(--slate);
+  padding:0.55rem 0;
+  border-bottom:1px solid var(--rule);
+}
+.fit-list li:last-child {
+  border-bottom:none;
+  padding-bottom:0;
+}
+.decision-band {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:1rem;
+  margin-top:1.5rem;
+}
+.decision-card {
+  border:1px solid var(--rule);
+  background:var(--cream);
+  padding:1.2rem 1.3rem;
+}
+.decision-card h3 {
+  font-family:var(--display);
+  font-size:1rem;
+  margin-bottom:0.45rem;
+}
+.decision-card p {
+  font-size:0.86rem;
+  color:var(--slate);
+  margin:0 0 0.75rem;
+}
+.fit-link {
+  font-family:var(--mono);
+  font-size:0.64rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--rust);
+  text-decoration:none;
+}
+.fit-link:hover {
+  text-decoration:underline;
+}
+.two-up {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:1.5rem;
+  margin-top:2.2rem;
+}
+.panel-card,
+.kpi-card {
+  border:1px solid var(--rule);
+  background:var(--pale);
+}
+.panel-card {
+  padding:1.4rem 1.5rem;
+}
+.panel-card h3 {
+  font-family:var(--display);
+  font-size:1.1rem;
+  margin-bottom:0.55rem;
+}
+.panel-card ul {
+  list-style:none;
+  margin:1rem 0 0;
+}
+.panel-card li {
+  padding:0.85rem 0;
+  border-bottom:1px solid var(--rule);
+  font-size:0.9rem;
+  color:var(--slate);
+}
+.panel-card li:last-child {
+  border-bottom:none;
+  padding-bottom:0;
+}
+.panel-card strong {
+  color:var(--ink);
+}
+.kpi-grid {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:1rem;
+  margin-top:1.5rem;
+}
+.kpi-card {
+  padding:1rem 1.1rem;
+}
+.kpi-card h3 {
+  font-family:var(--display);
+  font-size:1.1rem;
+  margin-bottom:0.55rem;
+}
+.kpi-card p {
+  margin:0;
+  font-size:0.88rem;
+  color:var(--slate);
+}
+.kpi-label {
+  display:block;
+  font-family:var(--mono);
+  font-size:0.58rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--steel);
+  margin-bottom:0.45rem;
+}
+.legend-note {
+  margin-top:1.5rem;
+  padding:1rem 1.2rem;
+  background:var(--cream);
+  border-left:4px solid var(--rust);
+  font-size:0.92rem;
+  color:var(--slate);
+}
+.legend-note strong { color:var(--ink); }
+.cta-band {
+  margin-top:1.75rem;
+  padding:1.35rem 1.5rem;
+  border:1px solid var(--rule);
+  background:var(--cream);
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1.5rem;
+}
+.cta-band h3 {
+  font-family:var(--display);
+  font-size:1.2rem;
+  margin-bottom:0.45rem;
+}
+.cta-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.75rem;
+  align-items:center;
+}
+
+/* ════════════════════════════════════════
+   GRAPH EXPLORER COMPONENT
+   ════════════════════════════════════════ */
+.graph-explorer {
+  position:relative; z-index:1;
+  border:2px solid var(--ink);
+  background:var(--pale);
+  margin:2rem 0;
+}
+.graph-explorer-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0.75rem 1.25rem;
+  border-bottom:1px solid var(--rule);
+  background:var(--cream);
+}
+.graph-explorer-label {
+  font-family:var(--mono); font-size:0.62rem;
+  letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--steel);
+  display:flex; align-items:center; gap:0.6rem;
+}
+.graph-explorer-label::before {
+  content:''; display:block;
+  width:8px; height:8px; border-radius:50%;
+  background:var(--rust);
+  animation:pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:0.5;transform:scale(1.3)}
+}
+.graph-explorer-controls {
+  display:flex; gap:0.5rem;
+}
+.ge-btn {
+  font-family:var(--mono); font-size:0.6rem;
+  letter-spacing:0.1em; text-transform:uppercase;
+  background:none; border:1px solid var(--rule);
+  padding:0.25rem 0.6rem; cursor:pointer;
+  color:var(--steel); transition:all 0.15s;
+}
+.ge-btn:hover, .ge-btn.active { border-color:var(--rust); color:var(--rust); }
+.ge-btn.active { background:var(--rust); color:#fff; }
+
+.graph-explorer-body {
+  display:grid; grid-template-columns:1fr 260px;
+}
+.graph-canvas { position:relative; overflow:hidden; height:480px; }
+.graph-canvas svg { width:100%; height:100%; cursor:grab; display:block; }
+.graph-canvas svg:active { cursor:grabbing; }
+
+.graph-panel {
+  border-left:1px solid var(--rule);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+.graph-panel-section {
+  padding:1rem 1.25rem;
+  border-bottom:1px solid var(--rule);
+}
+.graph-panel-label {
+  font-family:var(--mono); font-size:0.58rem;
+  letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--steel); margin-bottom:0.6rem;
+}
+.node-detail-name {
+  font-family:var(--display); font-size:1rem;
+  font-weight:700; line-height:1.2;
+  margin-bottom:0.25rem;
+}
+.node-detail-type {
+  font-family:var(--mono); font-size:0.6rem;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--steel); margin-bottom:0.5rem;
+}
+.node-detail-desc {
+  font-size:0.82rem; color:var(--slate);
+  line-height:1.6; margin:0;
+}
+.node-connections { list-style:none; }
+.node-connections li {
+  font-family:var(--mono); font-size:0.65rem;
+  padding:0.3rem 0; border-bottom:1px solid var(--rule);
+  display:flex; align-items:center; gap:0.5rem;
+  color:var(--slate);
+}
+.node-connections li:last-child { border-bottom:none; }
+.conn-type {
+  display:inline-block; width:8px; height:2px;
+  flex-shrink:0;
+}
+.empty-state {
+  font-family:var(--mono); font-size:0.65rem;
+  letter-spacing:0.05em; color:var(--steel);
+  text-align:center; padding:2rem 1.25rem;
+  opacity:0.7;
+}
+
+/* Schema panel */
+.schema-block {
+  background:var(--cream);
+  border:1px solid var(--rule);
+  padding:1.25rem 1.5rem;
+  margin-top:1.5rem;
+  position:relative;
+}
+.schema-toggle {
+  display:flex; align-items:center; justify-content:space-between;
+  cursor:pointer;
+}
+.schema-toggle-label {
+  font-family:var(--mono); font-size:0.65rem;
+  letter-spacing:0.15em; text-transform:uppercase;
+  color:var(--steel);
+}
+.schema-toggle-icon {
+  font-family:var(--mono); font-size:0.7rem;
+  color:var(--rust); transition:transform 0.2s;
+}
+.schema-content { display:none; margin-top:1.25rem; }
+.schema-content.open { display:block; }
+.schema-content pre {
+  font-family:var(--mono); font-size:0.72rem;
+  line-height:1.7; color:var(--slate);
+  white-space:pre-wrap; word-break:break-word;
+  margin:0;
+}
+.schema-content .tok-key { color:var(--rust); }
+.schema-content .tok-str { color:var(--slate); }
+.schema-content .tok-num { color:var(--gold); }
+
+/* Legend */
+.graph-legend {
+  display:flex; flex-wrap:wrap; gap:1rem;
+  padding:0.75rem 1.25rem;
+  border-top:1px solid var(--rule);
+  background:var(--cream);
+}
+.legend-item { display:flex; align-items:center; gap:0.4rem; font-family:var(--mono); font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--steel); }
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.legend-line { width:20px; height:0; border-top:2px solid; flex-shrink:0; }
+.legend-dashed { width:20px; height:0; border-top:2px dashed; flex-shrink:0; }
+
+/* Evidence table */
+.evidence-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; margin-top:1.5rem; }
+.evidence-table { width:100%; border-collapse:collapse; font-size:0.88rem; min-width:600px; }
+.evidence-table thead tr { border-bottom:2px solid var(--ink); }
+.evidence-table th { font-family:var(--mono); font-size:0.62rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--steel); padding:0.6rem 1rem 0.6rem 0; text-align:left; font-weight:400; }
+.evidence-table td { padding:0.8rem 1rem 0.8rem 0; border-bottom:1px solid var(--rule); vertical-align:top; }
+.evidence-table tr:last-child td { border-bottom:none; }
+.evidence-graph-link { text-decoration:none; color:var(--rust); font-size:0.75rem; opacity:0.6; transition:opacity 0.15s; margin-left:0.3rem; }
+.evidence-graph-link:hover { opacity:1; }
+.tag { display:inline-block; font-family:var(--mono); font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; padding:0.15rem 0.5rem; border:1px solid currentColor; }
+.tag-strong { color:var(--rust); }
+.tag-proto { color:var(--steel); }
+.tag-emerging { color:var(--gold); }
+
+/* Challenges */
+.challenge-item { padding:2rem 0; border-bottom:1px solid var(--rule); display:grid; grid-template-columns:3rem 1fr; gap:1.5rem; align-items:start; }
+.challenge-item:last-child { border-bottom:none; }
+.challenge-num { font-family:var(--mono); font-size:0.65rem; color:var(--rust); padding-top:0.2rem; }
+.challenge-item h3 { font-family:var(--display); font-size:1.05rem; font-weight:700; margin-bottom:0.5rem; }
+.challenge-item p { font-size:0.9rem; color:var(--slate); margin:0; }
+
+/* Tabs */
+.tabs { margin-top:2rem; }
+.tab-nav { display:flex; gap:0; border-bottom:2px solid var(--ink); flex-wrap:wrap; }
+.tab-btn { background:none; border:none; cursor:pointer; font-family:var(--mono); font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; padding:0.75rem 1.5rem; color:var(--steel); position:relative; transition:color 0.2s; }
+.tab-btn.active { color:var(--ink); }
+.tab-btn.active::after { content:''; position:absolute; bottom:-2px; left:0; width:100%; height:2px; background:var(--rust); }
+.tab-panel { padding:2rem 0; }
+.tab-panel[hidden] { display:none; }
+.tab-panel.active { display:block; }
+
+/* Progress bars */
+.metric-row { margin-bottom:1.25rem; }
+.metric-label { display:flex; justify-content:space-between; font-family:var(--mono); font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--steel); margin-bottom:0.4rem; }
+.metric-label strong { color:var(--ink); }
+.bar-track { height:4px; background:var(--rule); position:relative; }
+.bar-fill { height:100%; background:var(--rust); width:0; transition:width 1.2s cubic-bezier(0.25,0.46,0.45,0.94); }
+.bar-fill.animated { width:var(--target); }
+
+/* Content + TOC */
+.content-with-toc { display:grid; grid-template-columns:1fr 220px; gap:5rem; align-items:start; max-width:1300px; margin:0 auto; padding:5rem 4rem; position:relative; z-index:1; }
+.toc { position:sticky; top:2rem; padding:1.5rem; border-left:2px solid var(--ink); font-family:var(--mono); font-size:0.65rem; letter-spacing:0.1em; }
+.toc-label { text-transform:uppercase; color:var(--steel); margin-bottom:1rem; font-size:0.6rem; letter-spacing:0.2em; }
+.toc a { display:block; padding:0.3rem 0; text-decoration:none; color:var(--slate); transition:color 0.15s; text-transform:uppercase; font-size:0.6rem; }
+.toc a:hover, .toc a.active { color:var(--rust); }
+
+/* Animations */
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.fade-in { opacity:0; transform:translateY(20px); transition:opacity 0.7s ease,transform 0.7s ease; }
+.fade-in.visible { opacity:1; transform:translateY(0); }
+
+/* Reading progress */
+#progress-bar { position:fixed; top:0; left:0; z-index:1000; height:3px; width:0%; background:linear-gradient(90deg,var(--rust),var(--gold)); transition:width 0.1s linear; }
+
+/* Screen-reader only utility */
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+/* Focus styles for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--rust);
+  outline-offset: 2px;
+}
+.tab-btn:focus-visible { outline-offset: -2px; }
+.ge-btn:focus-visible { outline-offset: -2px; }
+
+mark { background:rgba(184,74,46,0.1); color:var(--rust); font-style:italic; padding:0.05em 0.15em; }
+code { font-family:var(--mono); font-size:0.85em; background:var(--cream); padding:0.1em 0.35em; border-radius:2px; color:var(--slate); }
+
+/* Footer */
+footer { border-top:2px solid var(--ink); padding:2.5rem 4rem; display:flex; align-items:center; justify-content:space-between; position:relative; z-index:1; background:var(--cream); }
+footer p { font-family:var(--mono); font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--steel); margin:0; }
+footer a { color:var(--rust); text-decoration:none; }
+footer a:hover { text-decoration:underline; }
+footer .footer-brand { font-family:var(--display); font-size:1.1rem; font-weight:700; color:var(--ink); }
+
+/* KG mini-graph section */
+.kg-explorer { border:1px solid var(--rule); background:var(--pale); margin:2rem 0; }
+.kg-explorer-header { padding:0.75rem 1.25rem; border-bottom:1px solid var(--rule); background:var(--cream); display:flex; align-items:center; justify-content:space-between; }
+.kg-canvas { height:340px; }
+.kg-canvas svg { width:100%; height:100%; cursor:grab; display:block; }
+.kg-canvas svg:active { cursor:grabbing; }
+.kg-footer { padding:0.6rem 1.25rem; border-top:1px solid var(--rule); background:var(--cream); font-family:var(--mono); font-size:0.62rem; color:var(--steel); letter-spacing:0.08em; }
+
+/* Evidence row cross-links */
+tr[data-node-id] { cursor:pointer; transition:background 0.15s; }
+tr[data-node-id]:hover { background:rgba(184,74,46,0.06); }
+
+/* Graph detail bottom-sheet (Fix 3 alt) */
+.graph-detail-sheet { position:fixed; bottom:0; left:0; right:0; z-index:200; background:var(--pale, #f9f5ee); border-top:2px solid var(--ink, #0d0d0d); padding:1.2rem 1.2rem 1.6rem; transform:translateY(100%); transition:transform 0.25s ease; max-height:40vh; overflow-y:auto; }
+.graph-detail-sheet.open { transform:translateY(0); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  .fade-in { opacity: 1; transform: none; }
+  .bar-fill { transition: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* Responsive */
+/* ── Mobile bottom-sheet for graph detail ── */
+.graph-bottom-sheet {
+  display:none;
+  position:fixed; bottom:0; left:0; right:0; z-index:200;
+  background:var(--pale); border-top:2px solid var(--ink);
+  max-height:45vh; overflow-y:auto;
+  padding:1.25rem 1.5rem 1.5rem;
+  box-shadow:0 -8px 30px rgba(0,0,0,0.15);
+  transform:translateY(100%);
+  transition:transform 0.3s ease;
+}
+.graph-bottom-sheet.open {
+  transform:translateY(0);
+}
+.graph-bottom-sheet-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:0.75rem;
+}
+.graph-bottom-sheet .node-detail-name {
+  font-family:var(--display); font-size:1rem; font-weight:700;
+}
+.graph-bottom-sheet .node-detail-type {
+  font-family:var(--mono); font-size:0.6rem; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--steel); margin-bottom:0.5rem;
+}
+.graph-bottom-sheet .node-detail-desc {
+  font-size:0.85rem; color:var(--slate); line-height:1.6;
+}
+.graph-bottom-sheet .node-connections {
+  list-style:none; margin-top:0.75rem; padding:0;
+}
+.graph-bottom-sheet .node-connections li {
+  font-family:var(--mono); font-size:0.65rem; padding:0.3rem 0;
+  border-bottom:1px solid var(--rule); display:flex; align-items:center; gap:0.5rem; color:var(--slate);
+}
+.graph-bottom-sheet .node-connections li:last-child { border-bottom:none; }
+.bs-close-btn {
+  background:none; border:1px solid var(--rule); cursor:pointer;
+  font-family:var(--mono); font-size:0.65rem; padding:0.25rem 0.6rem;
+  color:var(--steel); letter-spacing:0.1em; text-transform:uppercase;
+}
+.bs-close-btn:hover { border-color:var(--rust); color:var(--rust); }
+
+/* ── Floating section pills (mobile) ── */
+.section-pills {
+  display:none;
+  position:fixed; bottom:0; left:0; right:0; z-index:150;
+  background:rgba(245,240,232,0.95); backdrop-filter:blur(8px);
+  border-top:1px solid var(--rule);
+  padding:0.5rem 0.75rem;
+  justify-content:center; gap:0.35rem;
+  flex-wrap:nowrap; overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.section-pills a {
+  font-family:var(--mono); font-size:0.55rem; letter-spacing:0.08em;
+  text-transform:uppercase; text-decoration:none;
+  color:var(--steel); padding:0.3rem 0.5rem;
+  border:1px solid var(--rule); white-space:nowrap;
+  transition:color 0.15s, border-color 0.15s;
+  flex-shrink:0;
+}
+.section-pills a:hover, .section-pills a.active {
+  color:var(--rust); border-color:var(--rust);
+}
+
+@media(max-width:1100px){
+  .graph-explorer-body{grid-template-columns:1fr}
+  .graph-panel{display:none}
+  .graph-bottom-sheet{display:block}
+}
+@media(max-width:1024px){
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-right{display:none}
+  .hero-left{padding:3rem 2rem 2.5rem}
+  .hero-summary{grid-template-columns:1fr 1fr}
+  .section{padding:3rem 2rem}
+  .section-grid{grid-template-columns:1fr;gap:2.5rem}
+  .section-grid-3{grid-template-columns:1fr 1fr}
+  .fit-grid,.decision-band,.two-up,.kpi-grid{grid-template-columns:1fr}
+  .cta-band{flex-direction:column}
+  .content-with-toc{grid-template-columns:1fr;padding:3rem 2rem}
+  .toc{display:none}
+  .section-pills{display:flex}
+  footer{flex-direction:column;gap:1rem;text-align:center;padding:2rem}
+  .masthead{padding:0.75rem 1.5rem}
+  /* Fix 1: horizontal-scroll nav instead of hiding */
+  .masthead-nav{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:0.5rem;flex-shrink:1;min-width:0}
+  .masthead-nav a{white-space:nowrap;flex-shrink:0;font-size:0.72rem;padding:0.5rem 0.6rem}
+  .masthead-logo{font-size:0.6rem;flex-shrink:0}
+}
+@media(max-width:640px){
+  .section-grid-3{grid-template-columns:1fr}
+  .hero-title{font-size:2.4rem}
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Reading progress"></div>
+
+<!-- MASTHEAD -->
+<header class="masthead" role="banner">
+  <div class="masthead-logo">Veritas <span>Canvas</span> — Intelligence Brief</div>
+  <nav class="masthead-nav" aria-label="Document navigation">
+    <a href="#definition">Overview</a>
+    <a href="#where-it-fits">Fit</a>
+    <a href="#why-now">Why Now</a>
+    <a href="#evidence">Evidence</a>
+    <a href="#evaluation">Evaluate</a>
+    <a href="#architectures">Architectures</a>
+    <a href="#explore">Explore</a>
+    <a href="#risks">Risks</a>
+    <a href="#appendix">Appendix</a>
+    <a href="./NeSy-glossary.html">Glossary</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-heading">
+  <div class="hero-left">
+    <div>
+      <p class="hero-eyebrow">Research Brief · March 2026</p>
+      <h1 id="hero-heading" class="hero-title">Neuro-<em>Symbolic</em><br>AI in 2026</h1>
+      <p class="hero-sub">Architectures, evidence, and the LLM reliability shift. Explore the NeSy design space as an interactive knowledge graph grounded in how hybrid systems combine learning, explicit structure, and verifiable steps.</p>
+      <div class="hero-summary" role="group" aria-label="Quick scan of the page's main claims">
+        <div class="hero-chip">
+          <span class="hero-chip-label">Primary driver</span>
+          <strong>Reliability, not novelty</strong>
+          <p>Governance pressure and hallucination cost matter more than abstract hybrid purity tests.</p>
+        </div>
+        <div class="hero-chip">
+          <span class="hero-chip-label">Best fit</span>
+          <strong>Schema-heavy domains</strong>
+          <p>Clinical extraction, constrained workflows, and auditable pipelines show the clearest value.</p>
+        </div>
+        <div class="hero-chip">
+          <span class="hero-chip-label">Strongest lever</span>
+          <strong>Verification and traceability</strong>
+          <p>The practical upside comes when symbolic steps actually expose checks, traces, or invariants.</p>
+        </div>
+        <div class="hero-chip">
+          <span class="hero-chip-label">Real cost</span>
+          <strong>Inference drag and upkeep</strong>
+          <p>Symbolic runtime and knowledge engineering remain the hardest taxes on deployment.</p>
+        </div>
+      </div>
+      <div class="hero-ctas">
+        <a href="#definition" class="btn-primary">↓ Start Reading</a>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <span>Updated <strong>March 2026</strong></span>
+      <span>Read <strong>14–18 min</strong></span>
+      <span>Audience <strong>Research · Applied ML · Governance</strong></span>
+    </div>
+  </div>
+  <div class="hero-right" aria-label="Preview of NeSy architecture graph">
+    <svg id="hero-graph-svg" aria-hidden="true"></svg>
+  </div>
+</section>
+
+<hr class="rule-thick">
+
+<!-- MAIN CONTENT + TOC -->
+<div class="content-with-toc">
+<main>
+
+<!-- §1 DEFINITION -->
+<article id="definition" class="fade-in">
+  <p class="section-label section-number">01 — Overview</p>
+  <h2 class="section-h2">What Neuro-Symbolic AI Is — and Why the <em>Definition Still Slips</em></h2>
+  <p>Neuro-symbolic AI (NeSy) refers to approaches that combine <mark>neural learning</mark> — deep nets, embeddings, foundation models — with <mark>symbolic machinery</mark> such as logic, rules, structured knowledge, programs, theorem proving, and constraint solving. The goal is systems that can both learn from data and reason with explicit structure.</p>
+  <p>A core theme across modern surveys is that NeSy is not one architecture but a <strong>family of design patterns</strong> for integrating learning and reasoning.</p>
+
+  <div class="pullquote">
+    <p>"Symbolic" is broader than formal logic. In LLM-era discourse, symbolic components can include knowledge graphs, typed schemas, constraints, tool calls, planners, and verifiers — not only first-order logic and theorem proving.</p>
+  </div>
+
+  <p>The "why" behind NeSy is not simply explainability. Many papers position the goal as a <strong>three-way trade</strong> among accuracy/generalization, transparency/traceability, and robustness under distribution shift and missing data.</p>
+
+  <div class="tabs">
+    <div class="tab-nav" role="tablist" aria-label="Definition perspectives">
+      <button class="tab-btn" id="tab-btn-metaphor" role="tab" aria-selected="false" aria-controls="tab-metaphor" tabindex="-1">Cognitive Metaphor</button>
+      <button class="tab-btn" id="tab-btn-goals" role="tab" aria-selected="false" aria-controls="tab-goals" tabindex="-1">Three-Way Trade</button>
+      <button class="tab-btn active" id="tab-btn-scope" role="tab" aria-selected="true" aria-controls="tab-scope" tabindex="0">Scope of "Symbolic"</button>
+    </div>
+    <div id="tab-metaphor" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-metaphor" hidden>
+      <p>A common cognitive metaphor describes neural components as <strong>fast pattern recognition</strong> and symbolic components as <strong>slower deliberation</strong> — mapped to "System 1 / System 2" language from dual process theory (Kahneman). Researchers caution, however, that dual process theory is itself a family of models rather than a single precise mechanism.</p>
+    </div>
+    <div id="tab-goals" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-goals" hidden>
+      <p>Survey literature consistently identifies a three-part value proposition for NeSy:</p>
+      <div class="metric-row"><div class="metric-label"><span>Accuracy / Generalization</span><strong>Goal A</strong></div><div class="bar-track"><div class="bar-fill" style="--target:78%"></div></div></div>
+      <div class="metric-row"><div class="metric-label"><span>Transparency / Traceability</span><strong>Goal B</strong></div><div class="bar-track"><div class="bar-fill" style="--target:91%"></div></div></div>
+      <div class="metric-row"><div class="metric-label"><span>Robustness Under Shift</span><strong>Goal C</strong></div><div class="bar-track"><div class="bar-fill" style="--target:65%"></div></div></div>
+      <p style="font-size:0.8rem;color:var(--steel);margin-top:1rem;">Bars indicate relative emphasis in published survey framing, not empirical scores.</p>
+    </div>
+    <div id="tab-scope" class="tab-panel active" role="tabpanel" aria-labelledby="tab-btn-scope">
+      <p>The term "symbolic" in 2026 covers a wider surface than classical AI assumed. Components that now qualify include: first-order logic and theorem provers, probabilistic logic programs (ProbLog, DeepProbLog), knowledge graphs and ontologies, typed schemas and constraints, external tool calls (calculators, search APIs), program synthesis, structured planners and schedulers, and verifier modules that check output consistency.</p>
+    </div>
+  </div>
+</article>
+
+<hr class="rule">
+
+<!-- §2 FIT -->
+<article id="where-it-fits" class="fade-in">
+  <p class="section-label section-number">02 — Fit</p>
+  <h2 class="section-h2">Where NeSy Fits Best — And Where It <em>Doesn’t</em></h2>
+  <p>NeSy is most valuable when failure is costly, structure is real, and a team can define meaningful checks, traces, or constraints. It is much less compelling when the task is open-ended, low-risk, or impossible to anchor to a stable schema, ontology, or verification step.</p>
+  <div class="fit-grid">
+    <article class="fit-card">
+      <span class="fit-tag">Strong fit</span>
+      <h3>Regulated, structured, high-cost domains</h3>
+      <p>Use NeSy where explicit structure improves reliability and where auditability is a product requirement rather than a nice-to-have.</p>
+      <ul class="fit-list">
+        <li>Clinical extraction and research workflows</li>
+        <li>Decision support with clear ontologies or schemas</li>
+        <li>Enterprise processes where hallucinations are expensive</li>
+      </ul>
+    </article>
+    <article class="fit-card">
+      <span class="fit-tag">Conditional fit</span>
+      <h3>Mixed-structure workflows</h3>
+      <p>NeSy can help when one part of the system is messy and neural, but downstream stages still benefit from explicit validation or structure.</p>
+      <ul class="fit-list">
+        <li>Retrieval-heavy copilots with schema-aware outputs</li>
+        <li>Tool-using agents with post-generation checks</li>
+        <li>Operational systems with moderate latency budgets</li>
+      </ul>
+    </article>
+    <article class="fit-card">
+      <span class="fit-tag">Weak fit</span>
+      <h3>Open-ended, low-risk generation</h3>
+      <p>When the job is mostly ideation or unconstrained drafting, symbolic overhead often adds system complexity without enough return.</p>
+      <ul class="fit-list">
+        <li>Generic brainstorming and unconstrained writing</li>
+        <li>Low-stakes consumer prompts without stable structure</li>
+        <li>Tasks where no reliable verifier can be defined</li>
+      </ul>
+    </article>
+  </div>
+  <div class="decision-band" aria-label="Audience-based reading paths">
+    <article class="decision-card">
+      <p class="arch-card-tag">Research</p>
+      <h3>Compare architecture families</h3>
+      <p>Start with the design patterns and trade-offs, then inspect the graph to see how systems and concepts connect.</p>
+      <a href="#architectures" class="fit-link">Go to architectures →</a>
+    </article>
+    <article class="decision-card">
+      <p class="arch-card-tag">Applied ML</p>
+      <h3>Start with proof and measurement</h3>
+      <p>Use the evidence table and evaluation framework first to decide whether the reliability gains justify the added complexity.</p>
+      <a href="#evaluation" class="fit-link">Go to evaluation →</a>
+    </article>
+    <article class="decision-card">
+      <p class="arch-card-tag">Governance</p>
+      <h3>Start with evidence and risks</h3>
+      <p>Jump directly to measurable gains, traceability, and adoption friction instead of beginning with the technical architecture map.</p>
+      <a href="#risks" class="fit-link">Go to risks →</a>
+    </article>
+  </div>
+</article>
+
+<hr class="rule">
+
+<!-- §3 WHY NOW -->
+<article id="why-now" class="fade-in">
+  <p class="section-label section-number">03 — Why Now</p>
+  <h2 class="section-h2">Why the LLM Era Made NeSy Feel <em>Urgent</em></h2>
+  <p>From 2024 to 2026, NeSy work shifted from academic niche to an answer for a concrete production problem: <mark>reliability</mark> in generative systems — factual errors, contradictions, and brittle reasoning. Three distinct drivers accelerated this transition.</p>
+  <div class="section-grid" style="margin-top:2.5rem;">
+    <div>
+      <div class="arch-card fade-in">
+        <p class="arch-card-tag">Driver 01 — Governance</p>
+        <h3>Regulatory Pressure</h3>
+        <p>The EU AI Act imposes strict obligations on high-risk systems: logging, documentation, human oversight, robustness, and accuracy requirements. U.S. NIST Generative AI Profile guidance addresses risks from lack of explainability through documentation and evaluation practices.</p>
+      </div>
+    </div>
+    <div>
+      <div class="arch-card fade-in">
+        <p class="arch-card-tag">Driver 02 — Engineering</p>
+        <h3>Hallucination Problem</h3>
+        <p>Research attention on hallucination mitigation is visible in surveys focused on retrieval and structured external knowledge, and in NeSy-for-LLMs work such as "Logically Consistent Language Models via Neuro-Symbolic Integration" — turning logical requirements into training objectives.</p>
+      </div>
+    </div>
+    <div style="grid-column:1/-1">
+      <div class="arch-card fade-in">
+        <p class="arch-card-tag">Driver 03 — Enterprise</p>
+        <h3>Industry Narrative Shift</h3>
+        <p>Gartner's 2025 materials emphasize a pivot away from GenAI-as-hype toward foundational enablers, explicitly discussing governance challenges as part of the scaling story. "Neuro-symbolic" is increasingly placed inside "composite AI" framing. Treat as directional signal, not technical validation.</p>
+      </div>
+    </div>
+  </div>
+</article>
+
+<hr class="rule">
+
+<!-- §4 EVIDENCE -->
+<article id="evidence" class="fade-in" style="padding:0 4rem;max-width:1300px;margin:0 auto;padding-top:5rem;padding-bottom:0">
+  <p class="section-label section-number">04 — Applications</p>
+  <h2 class="section-h2">Where NeSy Is Producing <em>Measurable Gains</em></h2>
+  <p>The application story is mixed. The most credible evidence appears where there is a well-defined schema or ontology, auditability matters, and constraints are naturally expressible.</p>
+  <div class="evidence-table-wrap" role="region" aria-label="Evidence table" tabindex="0">
+  <table class="evidence-table">
+    <caption class="sr-only">NeSy application evidence by domain, evidence type, key claim, and confidence level</caption>
+    <thead><tr><th scope="col">Domain</th><th scope="col">Evidence Type</th><th scope="col">Key Claim</th><th scope="col">Confidence</th></tr></thead>
+    <tbody>
+      <tr data-node-id="p-clinical"><td><strong>Clinical Extraction</strong> <a href="#explore" class="evidence-graph-link" data-node="p-clinical" title="View in graph">⬡</a></td><td>Peer-reviewed (Comms. Medicine, 2025)</td><td>Outperforms GPT-4 alone on specific extraction tasks; provides auditable chain of reasoning for clinical research workflows</td><td><span class="tag tag-strong">Strong</span></td></tr>
+      <tr data-node-id="s-lnn"><td><strong>Diagnosis Prediction</strong> <a href="#explore" class="evidence-graph-link" data-node="s-lnn" title="View in graph">⬡</a></td><td>Case study (LNN-based)</td><td>Integrates domain rules with learnable thresholds, preserving interpretability with competitive predictive performance (diabetes)</td><td><span class="tag tag-emerging">Emerging</span></td></tr>
+      <tr data-node-id="c-kg"><td><strong>Drug Discovery</strong> <a href="#explore" class="evidence-graph-link" data-node="c-kg" title="View in graph">⬡</a></td><td>Research papers</td><td>Knowledge graphs + rule-weight learning for mechanism-of-action reasoning (MoA deconvolution) with interpretability grounded in explicit rules</td><td><span class="tag tag-emerging">Emerging</span></td></tr>
+      <tr data-node-id="f-scaffold"><td><strong>E-commerce (Amazon Rufus)</strong> <a href="#explore" class="evidence-graph-link" data-node="f-scaffold" title="View in graph">⬡</a></td><td>Vendor / press</td><td>WSJ framing: neurosymbolic approach powering shopping assistant. Full technical details not publicly disclosed.</td><td><span class="tag tag-proto">Signal Only</span></td></tr>
+      <tr><td><strong>Warehouse Robotics</strong></td><td>Vendor press</td><td>Amazon Vulcan: tactile-sensing system for warehouse manipulation. Directional signal only.</td><td><span class="tag tag-proto">Signal Only</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="pullquote" style="margin-top:2.5rem;">
+    <p>The most credible NeSy gains come where there is a well-defined ontology, auditability requirements, and naturally expressible constraints — not wherever “hybrid” appears in marketing copy.</p>
+    <cite>— Synthesized from 2025–2026 survey literature</cite>
+  </div>
+</article>
+
+<hr class="rule">
+
+<!-- §5 EVALUATION -->
+<article id="evaluation" class="fade-in" style="padding:0 4rem;max-width:1300px;margin:0 auto">
+  <p class="section-label section-number">05 — Measurement</p>
+  <h2 class="section-h2">Evaluation: What <em>"Success"</em> Should Mean</h2>
+  <p>A recurring theme in recent surveys is that NeSy evaluation practices remain uneven. A 2026 task-directed survey notes reproducibility issues, inconsistencies across benchmarks even with the same black-box baselines, and a trend toward toy tasks tailored to new methods. Four measurable dimensions now define rigorous evaluation.</p>
+  <div class="two-up">
+    <article class="panel-card">
+      <p class="arch-card-tag">Operator checklist</p>
+      <h3>Core checklist</h3>
+      <ul>
+        <li><strong>Constraint satisfaction:</strong> measure how often outputs violate rules, schemas, invariants, or factual requirements.</li>
+        <li><strong>Auditability:</strong> verify that the system can surface meaningful traces such as rules fired, graph paths, proof steps, or verification outcomes.</li>
+        <li><strong>Robustness:</strong> test behavior under missing evidence, perturbations, and edge cases where pure neural systems often fail quietly.</li>
+        <li><strong>Cost and latency:</strong> confirm that symbolic overhead does not erase the business value of better failure behavior.</li>
+      </ul>
+    </article>
+    <article class="panel-card">
+      <p class="arch-card-tag">Failure modes</p>
+      <h3>What teams get wrong</h3>
+      <ul>
+        <li>Benchmarking only on toy tasks designed around a method instead of real operational failure cases.</li>
+        <li>Calling a system interpretable just because it contains rules, even when the neural-to-symbolic mapping is weak.</li>
+        <li>Ignoring runtime overhead until the system is already hitting production scale or tight SLAs.</li>
+        <li>Confusing retrieval, tools, or structured prompting with full formal verification.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="kpi-grid" aria-label="Suggested NeSy evaluation dimensions">
+    <article class="kpi-card">
+      <span class="kpi-label">E.1</span>
+      <h3>Logical consistency</h3>
+      <p>Track contradiction rate, rule violations, and invariant failures.</p>
+    </article>
+    <article class="kpi-card">
+      <span class="kpi-label">E.2</span>
+      <h3>Trace quality</h3>
+      <p>Assess whether traces are meaningful enough for debugging, audit, and compliance review.</p>
+    </article>
+    <article class="kpi-card">
+      <span class="kpi-label">E.3</span>
+      <h3>Shift robustness</h3>
+      <p>Measure behavior under sparse evidence, perturbations, and role-specific edge cases.</p>
+    </article>
+    <article class="kpi-card">
+      <span class="kpi-label">E.4</span>
+      <h3>Decisions per dollar</h3>
+      <p>Relate reliability gains to inference cost, symbolic runtime, and operational complexity.</p>
+    </article>
+  </div>
+  <div class="legend-note">
+    <strong>Reliability lens.</strong> Accuracy alone is not the right scoreboard. In practice, the useful question is whether a neuro-symbolic system delivers fewer bad failures, better traces, and acceptable cost under real deployment pressure.
+  </div>
+  <div class="cta-band">
+    <div>
+      <p class="arch-card-tag">Next step</p>
+      <h3>Choose your next path</h3>
+      <p>If the fit and evidence look compelling, compare architecture families first, then use the interactive explorer to inspect systems, concepts, and trade-offs in more depth.</p>
+    </div>
+    <div class="cta-actions">
+      <a href="#architectures" class="btn-primary">Compare Architectures</a>
+      <a href="#explore" class="btn-secondary">Open Explorer</a>
+      <button class="btn-secondary" type="button" onclick="window.print()">Print / Save Brief</button>
+    </div>
+  </div>
+</article>
+
+<hr class="rule">
+
+<!-- §6 ARCHITECTURES -->
+<article id="architectures" class="fade-in" style="padding:0 4rem;max-width:1300px;margin:0 auto">
+  <p class="section-label section-number">06 — Architectures</p>
+  <h2 class="section-h2">Architecture Families And Their <em>Trade-Offs</em></h2>
+  <p>Once NeSy looks relevant, the next question is where the symbolic layer should actually live. A 2025 roadmap frames this as an integration problem spanning preprocessing, representation, reasoning, and symbolic postprocessing.</p>
+  <div class="section-grid-3" style="margin-top:2rem;">
+    <div class="arch-card">
+      <p class="arch-card-tag">Family 01</p>
+      <h3>Differentiable Logic</h3>
+      <p>Logic-like operators are embedded directly into the learning loop so rules and constraints shape training through gradients.</p>
+    </div>
+    <div class="arch-card">
+      <p class="arch-card-tag">Family 02</p>
+      <h3>Neural Theorem Proving</h3>
+      <p>Proof-like behavior is preserved, but symbolic operations such as unification are softened into similarity over embeddings.</p>
+    </div>
+    <div class="arch-card">
+      <p class="arch-card-tag">Family 03</p>
+      <h3>Probabilistic Logic Programming</h3>
+      <p>Rules, uncertainty, and learned perception coexist in one system, making this family useful when downstream reasoning is explicit but inputs are noisy.</p>
+    </div>
+    <div class="arch-card">
+      <p class="arch-card-tag">Family 04</p>
+      <h3>Program-Centric Reasoning</h3>
+      <p>Focused on systematic generalization across objects, relations, and compositional tasks rather than narrow memorization.</p>
+    </div>
+    <div class="arch-card">
+      <p class="arch-card-tag">Family 05</p>
+      <h3>LLM Symbolic Scaffolding</h3>
+      <p>Structured retrieval, schemas, planners, and tools live outside the model, making this the most common commercial pattern today.</p>
+    </div>
+    <div class="arch-card" style="background:var(--cream);border-color:var(--rust);">
+      <p class="arch-card-tag" style="color:var(--rust);">Key caveat</p>
+      <h3>Verifiability Gap</h3>
+      <p>Symbolic-looking pipelines are not automatically reliable. If there is no explicit verifier or checker, many failures remain statistical rather than formally controlled.</p>
+    </div>
+  </div>
+  <div class="legend-note">
+    <strong>Reliability lens.</strong> The closer the symbolic layer is to explicit verification, the stronger the traceability. The closer it is to loose scaffolding, the easier it is to ship.
+  </div>
+</article>
+
+<hr class="rule">
+
+<!-- §7 EXPLORE -->
+<section id="explore" style="position:relative;z-index:1;" aria-labelledby="explore-heading">
+  <article class="fade-in" style="padding:0 4rem;max-width:1300px;margin:0 auto">
+    <p class="section-label section-number">07 — Explore</p>
+    <h2 class="section-h2" id="explore-heading">Interactive Explorer And Symbolic Scaffolding <em>Demos</em></h2>
+    <p>Use the modules below after the fit, evidence, and evaluation criteria are clear. They are designed to deepen understanding, not to carry the core explanatory burden of the page.</p>
+  </article>
+
+  <div style="position:relative;z-index:1;padding:0 4rem 3rem;" aria-labelledby="ge-heading">
+    <div class="graph-explorer" role="region" aria-label="NeSy Architecture Graph Explorer">
+      <div class="graph-explorer-header">
+        <div class="graph-explorer-label" id="ge-heading">Graph Explorer — NeSy Architecture Families</div>
+        <div class="graph-explorer-controls" role="toolbar" aria-label="Filter nodes">
+          <button class="ge-btn active" data-filter="all">All</button>
+          <button class="ge-btn"        data-filter="Family">Families</button>
+          <button class="ge-btn"        data-filter="System">Systems</button>
+          <button class="ge-btn"        data-filter="Concept">Concepts</button>
+          <button class="ge-btn"        data-filter="Paper">Papers</button>
+          <button class="ge-btn"        id="ge-reset-btn" style="margin-left:0.5rem">Reset</button>
+        </div>
+      </div>
+      <div class="graph-explorer-body">
+        <div class="graph-canvas">
+          <svg id="ge-svg" role="img" aria-label="Interactive NeSy architecture graph. Click nodes for details."></svg>
+        </div>
+        <aside class="graph-panel" aria-live="polite" aria-label="Selected node details">
+          <div class="graph-panel-section">
+            <p class="graph-panel-label">Selected Node</p>
+            <div id="ge-detail-name" class="node-detail-name" style="color:var(--steel);font-family:var(--mono);font-size:0.75rem;">No node selected</div>
+            <div id="ge-detail-type" class="node-detail-type"></div>
+            <p id="ge-detail-desc" class="node-detail-desc"></p>
+          </div>
+          <div class="graph-panel-section" style="flex:1;overflow-y:auto;">
+            <p class="graph-panel-label">Connections</p>
+            <ul id="ge-connections" class="node-connections">
+              <li style="color:var(--steel);font-family:var(--mono);font-size:0.62rem;border:none;">—</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+      <div class="graph-legend" role="list" aria-label="Graph legend">
+        <div class="legend-item" role="listitem"><span class="legend-dot" style="background:var(--n-family)"></span>Architecture Family</div>
+        <div class="legend-item" role="listitem"><span class="legend-dot" style="background:var(--n-system)"></span>System / Framework</div>
+        <div class="legend-item" role="listitem"><span class="legend-dot" style="background:var(--n-concept)"></span>Concept</div>
+        <div class="legend-item" role="listitem"><span class="legend-dot" style="background:var(--n-paper)"></span>Paper / Work</div>
+        <span style="flex:1"></span>
+        <div class="legend-item" role="listitem"><span class="legend-line" style="border-color:var(--e-implements)"></span>Implements</div>
+        <div class="legend-item" role="listitem"><span class="legend-line" style="border-color:var(--e-extends)"></span>Extends</div>
+        <div class="legend-item" role="listitem"><span class="legend-dashed" style="border-color:var(--e-requires)"></span>Requires</div>
+        <div class="legend-item" role="listitem"><span class="legend-dashed" style="border-color:var(--e-cites);border-color:rgba(13,13,13,0.35)"></span>Cites</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="position:relative;z-index:1;padding:0 4rem 5rem;" aria-labelledby="kg-heading">
+    <article class="fade-in">
+      <p class="section-label">07b — Explore</p>
+      <h2 class="section-h2" id="kg-heading">Knowledge Graphs as <em>Symbolic Scaffolding</em></h2>
+      <p>GraphRAG and similar LLM-era architectures use a <mark>knowledge graph</mark> as the symbolic layer — replacing strict formal logic with structured retrieval, entity relationships, and schema-constrained memory.</p>
+      <p>This is the fifth architecture family in operational form. Its key limitation remains the same: without explicit verifiers, it does not inherit the guarantees of more formal NeSy families.</p>
+    </article>
+
+    <div class="kg-explorer">
+      <div class="kg-explorer-header">
+        <div class="graph-explorer-label">Knowledge Graph Demo — GraphRAG / Symbolic Scaffolding Pattern</div>
+        <span style="font-family:var(--mono);font-size:0.6rem;color:var(--steel)">Hover nodes · Drag to rearrange</span>
+      </div>
+      <div class="kg-canvas">
+        <svg id="kg-svg" aria-label="Knowledge graph demonstration showing entity relationships in a GraphRAG-style system"></svg>
+      </div>
+      <div class="kg-footer" id="kg-detail">Hover any node to see its role in the knowledge graph.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- §8 RISKS -->
+<article id="risks" class="fade-in" style="padding:0 4rem;max-width:1300px;margin:0 auto">
+  <p class="section-label section-number">08 — Risks</p>
+  <h2 class="section-h2">Operational Risks And Adoption <em>Friction</em></h2>
+  <div style="margin-top:1.5rem;">
+    <div class="challenge-item"><span class="challenge-num">01</span><div><h3>Scalability</h3><p>Proof search explosion in neural theorem proving, expensive probabilistic inference in logic programming hybrids, and symbolic workload overhead in system-level profiling. Real-time performance is often unmet on commodity hardware.</p></div></div>
+    <div class="challenge-item"><span class="challenge-num">02</span><div><h3>Knowledge Acquisition</h3><p>NeSy systems often assume clean ontologies, high-quality rule sets, or curated graphs — expensive to build and maintain, brittle when domain concepts evolve.</p></div></div>
+    <div class="challenge-item"><span class="challenge-num">03</span><div><h3>LLM-to-Symbolic Translation Instability</h3><p>Turning free-form natural language into reliable logic constraints, executable programs, or trustworthy graph updates is still error-prone — why some approaches prefer statistical constraint enforcement over explicit parsing at runtime.</p></div></div>
+    <div class="challenge-item"><span class="challenge-num">04</span><div><h3>Interpretability Is Not Automatic</h3><p>Adding rules can increase transparency only if the symbolic layer is understandable and the mapping between neural representations and symbolic artifacts is faithful. "Hybrid" systems can accumulate new failure modes: mis-specified constraints, misleading explanations, partial traceability.</p></div></div>
+  </div>
+</article>
+
+<hr class="rule">
+
+<!-- §9 APPENDIX -->
+<article id="appendix" class="fade-in" style="padding:0 4rem;max-width:1300px;margin:0 auto;padding-bottom:5rem;">
+  <p class="section-label section-number">09 — Appendix</p>
+  <h2 class="section-h2">The AGI Debate: What NeSy Does — and Does <em>Not</em> — Settle</h2>
+  <p>For readers interested in longer-range implications, the AGI debate remains relevant. It matters less for near-term deployment decisions than fit, evidence, and reliability, which is why it now sits in the appendix rather than the main decision path.</p>
+  <div class="section-grid" style="margin-top:2rem;">
+    <div>
+      <div class="pullquote">
+        <p>Progress toward robust general intelligence will require hybrid architectures, rich prior knowledge, and sophisticated techniques for reasoning — the triumvirate of prerequisites for constructing rich cognitive models.</p>
+        <cite>— Gary Marcus, 2020 (paraphrase)</cite>
+      </div>
+      <p style="margin-top:1.5rem;">Critics of pure deep learning argue that NeSy provides essential missing pieces. No consensus architecture, however, obviously scales to open-world generality.</p>
+    </div>
+    <div>
+      <div class="arch-card" style="border-color:var(--gold);">
+        <p class="arch-card-tag" style="color:var(--gold);">Strategic Assessment · 2026</p>
+        <h3>A Design Discipline, Not a Road to AGI</h3>
+        <p>NeSy in 2026 is less a single road to general intelligence and more a <strong>design discipline</strong>: it gives engineers structured ways to combine (1) learning, (2) explicit knowledge, and (3) verifiable steps — especially under governance and reliability demands. That discipline maps cleanly to near-term deployment needs even if the long-run AGI question remains open.</p>
+      </div>
+    </div>
+  </div>
+</article>
+
+</main>
+
+<aside aria-label="Table of contents">
+  <nav class="toc">
+    <p class="toc-label">Contents</p>
+    <a href="#definition" class="toc-link">01 · Overview</a>
+    <a href="#where-it-fits" class="toc-link">02 · Where It Fits</a>
+    <a href="#why-now" class="toc-link">03 · Why Now</a>
+    <a href="#evidence" class="toc-link">04 · Evidence</a>
+    <a href="#evaluation" class="toc-link">05 · Evaluate</a>
+    <a href="#architectures" class="toc-link">06 · Architectures</a>
+    <a href="#explore" class="toc-link">07 · Explore</a>
+    <a href="#risks" class="toc-link">08 · Risks</a>
+    <a href="#appendix" class="toc-link">09 · Appendix</a>
+  </nav>
+</aside>
+</div>
+
+<!-- Schema appendix (relocated from inline between Graph Explorer and KG Demo) -->
+<section style="position:relative;z-index:1;padding:1.5rem 4rem 2rem;max-width:1300px;margin:0 auto;">
+  <details class="schema-block" id="schema-section">
+    <summary class="schema-toggle" style="cursor:pointer;list-style:none;">
+      <span class="schema-toggle-label">Graph data schema (developer reference)</span>
+      <span class="schema-toggle-icon" id="schema-icon" style="float:right">+ Expand</span>
+    </summary>
+    <div id="schema-content" class="schema-content" role="region">
+      <p style="font-size:0.82rem;color:var(--slate);margin-bottom:1rem;">The graph explorer is driven by this JSON contract. Each node carries <code>id</code>, <code>label</code>, <code>layer</code>, <code>type</code>, and <code>desc</code>. Edges carry <code>source</code>, <code>target</code>, and <code>type</code>. This structure is portable across any graph-explorer instance.</p>
+      <pre id="schema-pre"></pre>
+    </div>
+  </details>
+</section>
+
+<!-- Graph detail bottom-sheet (mobile fallback for graph-panel) -->
+<div class="graph-bottom-sheet" id="graph-bottom-sheet" aria-live="polite" aria-label="Selected node details">
+  <div class="graph-bottom-sheet-header">
+    <div>
+      <div id="bs-detail-name" class="node-detail-name" style="color:var(--steel);font-family:var(--mono);font-size:0.75rem;">No node selected</div>
+      <div id="bs-detail-type" class="node-detail-type"></div>
+    </div>
+    <button class="bs-close-btn" onclick="closeBottomSheet()" aria-label="Close detail panel">Close</button>
+  </div>
+  <p id="bs-detail-desc" class="node-detail-desc"></p>
+  <ul id="bs-connections" class="node-connections">
+    <li style="color:var(--steel);font-family:var(--mono);font-size:0.62rem;border:none;">&mdash;</li>
+  </ul>
+</div>
+
+<!-- Floating section pills (visible on mobile when TOC is hidden) -->
+<nav class="section-pills" id="section-pills" aria-label="Section navigation">
+  <a href="#definition">01</a>
+  <a href="#where-it-fits">02</a>
+  <a href="#why-now">03</a>
+  <a href="#evidence">04</a>
+  <a href="#evaluation">05</a>
+  <a href="#architectures">06</a>
+  <a href="#explore">07</a>
+  <a href="#risks">08</a>
+  <a href="#appendix">09</a>
+</nav>
+
+<hr class="rule-thick">
+<footer role="contentinfo">
+  <div class="footer-brand">Veritas Canvas</div>
+  <p>Intelligence Brief — Neuro-Symbolic AI in 2026<br>Architectures, Evidence &amp; the LLM Reliability Shift</p>
+  <p>Powered by graph-explorer · <a href="./NeSy-glossary.html">Glossary</a> · 2026</p>
+</footer>
+
+<!-- ════════════════════════════════════════════
+     GRAPH DATA + D3 RENDERING
+     ════════════════════════════════════════════ -->
+<script>
+// ─── NeSy graph dataset ───────────────────────────────────────────────────────
+const NESY_NODES = [
+  // Architecture Families
+  {id:"f-difflogic",  label:"Differentiable Logic",      layer:"Family", type:"Architecture Family", desc:"Embeds logic-like operators in differentiable form so learning and constraint satisfaction occur through gradient-based optimization. Allows end-to-end training with symbolic constraints."},
+  {id:"f-ntp",        label:"Neural Theorem Proving",    layer:"Family", type:"Architecture Family", desc:"Reasoning resembles symbolic backward chaining but key operations like unification are relaxed into continuous computations over embeddings. Connects Prolog-style proof search to neural representations."},
+  {id:"f-problog",    label:"Probabilistic Logic Prog.", layer:"Family", type:"Architecture Family", desc:"Treats symbolic rules + uncertainty as first-class objects, connected to learned perception modules. Enables joint learning of neural and symbolic parameters under a probabilistic semantics."},
+  {id:"f-programcentric", label:"Program-Centric Reasoning", layer:"Family", type:"Architecture Family", desc:"Focuses on systematic generalization: learning rules on smaller tasks and generalizing to larger combinatorial instances using logic programming constructs over objects and relations."},
+  {id:"f-scaffold",   label:"LLM Symbolic Scaffolding",  layer:"Family", type:"Architecture Family", desc:"Symbolic component appears as structured retrieval, graph-structured memory, schemas, and external tool calls. Common in LLM-era production systems. Lacks formal verifiability unless paired with explicit checkers."},
+  // Systems
+  {id:"s-ltn",        label:"Logic Tensor Networks",     layer:"System", type:"System / Framework",  desc:"Canonical differentiable logic framework. Defines Real Logic — a fully differentiable logical language grounded onto data using neural computational graphs and fuzzy semantics. Unifies learning and reasoning."},
+  {id:"s-lnn",        label:"Logical Neural Networks",   layer:"System", type:"System / Framework",  desc:"Learnable thresholds and weights tied to rules. Used for knowledge base completion and interpretable clinical prediction. Emphasizes rule-grounded, interpretable predictions."},
+  {id:"s-deepproblog",label:"DeepProbLog",               layer:"System", type:"System / Framework",  desc:"Neural probabilistic logic programming language with neural predicates. Adapts ProbLog's probabilistic inference and learning to a hybrid neural-symbolic setting."},
+  {id:"s-nlm",        label:"Neural Logic Machines",     layer:"System", type:"System / Framework",  desc:"Combine neural function approximation with logic programming constructs over objects, relations, and quantifiers. Demonstrate generalization from small to larger-scale combinatorial tasks."},
+  {id:"s-graphrag",   label:"GraphRAG",                  layer:"System", type:"System / Framework",  desc:"Microsoft Research. Combines text extraction, network analysis, and LLM prompting/summarization into an end-to-end approach for understanding large text datasets using graph-structured memory."},
+  {id:"s-toolformer", label:"Toolformer",                layer:"System", type:"System / Framework",  desc:"Language model learns when and how to call external tools (calculator, search) via self-supervised training. Compositional augmentation that moves key operations outside pure next-token prediction."},
+  // Concepts
+  {id:"c-fuzzy",      label:"Fuzzy Semantics",           layer:"Concept", type:"Concept",           desc:"Real-valued generalisation of Boolean logic. Allows gradual satisfaction of logical predicates, enabling gradient flow through symbolic constraints. Central to differentiable logic families."},
+  {id:"c-unification",label:"Differentiable Unification",layer:"Concept", type:"Concept",           desc:"Replaces symbolic unification with differentiable similarity over embeddings. Core operation in neural theorem proving — enables proof-like computations to be trained end-to-end."},
+  {id:"c-neuralpredicates",label:"Neural Predicates",   layer:"Concept", type:"Concept",           desc:"Learned functions that replace hand-coded symbolic predicates in probabilistic logic programs. Bridge perception (neural) and reasoning (symbolic) in hybrid architectures."},
+  {id:"c-verifier",   label:"Verifier / Checker",        layer:"Concept", type:"Concept",           desc:"Explicit module that checks output consistency against logical constraints or rules. Missing from most LLM scaffolding systems — its absence is the core verifiability gap."},
+  {id:"c-kg",         label:"Knowledge Graph",           layer:"Concept", type:"Concept",           desc:"Structured representation of entities and relationships. Serves as the symbolic memory layer in GraphRAG and similar systems. Reduces hallucinations by grounding generation in explicit structure."},
+  // Papers
+  {id:"p-rocktaschel",label:"Rocktäschel & Riedel 2017",layer:"Paper", type:"Foundational Paper",  desc:"End-to-end differentiable proving. Replaces unification with differentiable similarity, constructing proof-like computations inspired by Prolog-style backward chaining."},
+  {id:"p-logicalmind",label:"Logically Consistent LMs", layer:"Paper", type:"Key Paper 2024",       desc:"Proposes fine-tuning objectives that encourage LLM consistency with external facts and rules. Middle ground between pure fine-tuning and delegating reasoning to external solvers."},
+  {id:"p-clinical",   label:"Clinical Extraction 2025", layer:"Paper", type:"Application Paper",    desc:"Communications Medicine 2025. Neuro-symbolic system outperforms GPT-4 alone on clinical extraction tasks. Emphasises auditable chain of reasoning for trustworthy clinical research automation."},
+];
+
+const NESY_EDGES = [
+  // Family → System (implements)
+  {source:"f-difflogic",    target:"s-ltn",            type:"implements"},
+  {source:"f-difflogic",    target:"s-lnn",            type:"implements"},
+  {source:"f-ntp",          target:"s-deepproblog",    type:"extends"},
+  {source:"f-problog",      target:"s-deepproblog",    type:"implements"},
+  {source:"f-programcentric",target:"s-nlm",           type:"implements"},
+  {source:"f-scaffold",     target:"s-graphrag",       type:"implements"},
+  {source:"f-scaffold",     target:"s-toolformer",     type:"implements"},
+  // System → Concept (requires)
+  {source:"s-ltn",          target:"c-fuzzy",          type:"requires"},
+  {source:"s-deepproblog",  target:"c-neuralpredicates",type:"requires"},
+  {source:"s-graphrag",     target:"c-kg",             type:"requires"},
+  {source:"f-ntp",          target:"c-unification",    type:"requires"},
+  {source:"f-scaffold",     target:"c-verifier",       type:"requires"},
+  // Paper citations
+  {source:"p-rocktaschel",  target:"f-ntp",            type:"cites"},
+  {source:"p-rocktaschel",  target:"c-unification",    type:"cites"},
+  {source:"p-logicalmind",  target:"f-scaffold",       type:"cites"},
+  {source:"p-logicalmind",  target:"c-verifier",       type:"cites"},
+  {source:"p-clinical",     target:"s-lnn",            type:"cites"},
+  {source:"p-clinical",     target:"c-verifier",       type:"cites"},
+  // Cross-family
+  {source:"f-difflogic",    target:"f-ntp",            type:"extends"},
+  {source:"f-problog",      target:"f-programcentric", type:"extends"},
+];
+
+// ─── Colour maps ──────────────────────────────────────────────────────────────
+const NODE_COLOR = { Family:"#b84a2e", System:"#3a4a5c", Concept:"#c9952a", Paper:"#6b7f8f" };
+const NODE_R     = { Family:18, System:14, Concept:11, Paper:9 };
+const EDGE_COLOR = { implements:"#b84a2e", extends:"#c9952a", requires:"#3a4a5c", cites:"rgba(13,13,13,0.25)" };
+const EDGE_DASH  = { implements:null, extends:null, requires:"6 3", cites:"3 3" };
+
+// ─── MAIN GRAPH EXPLORER ──────────────────────────────────────────────────────
+(function buildMainGraph(){
+  const W = 840, H = 480;
+  const svg = d3.select("#ge-svg").attr("viewBox",`0 0 ${W} ${H}`);
+
+  // zoom
+  const zoom = d3.zoom().scaleExtent([0.3,3]).on("zoom", e => g.attr("transform", e.transform));
+  svg.call(zoom);
+
+  const g = svg.append("g");
+
+  // defs: arrowheads
+  const defs = svg.append("defs");
+  ["implements","extends","requires","cites"].forEach(t => {
+    defs.append("marker").attr("id","arr-"+t)
+      .attr("markerWidth",8).attr("markerHeight",8)
+      .attr("refX",7).attr("refY",3).attr("orient","auto")
+      .append("path").attr("d","M0,0 L0,6 L8,3 z")
+      .attr("fill", EDGE_COLOR[t]);
+  });
+
+  let nodes = NESY_NODES.map(n => Object.assign({},n));
+  let edges = NESY_EDGES.map(e => Object.assign({},e));
+
+  const sim = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(edges).id(d=>d.id).distance(d => {
+      const lt = d.type; 
+      if(lt==="implements") return 90;
+      if(lt==="extends")    return 100;
+      if(lt==="requires")   return 75;
+      return 120;
+    }).strength(0.5))
+    .force("charge", d3.forceManyBody().strength(-280))
+    .force("center",  d3.forceCenter(W/2, H/2))
+    .force("collide", d3.forceCollide().radius(d => NODE_R[d.layer] + 20))
+    .force("x", d3.forceX(W/2).strength(0.04))
+    .force("y", d3.forceY(H/2).strength(0.04));
+
+  const link = g.selectAll(".ge-link").data(edges).enter().append("line")
+    .attr("class","ge-link")
+    .attr("stroke", d => EDGE_COLOR[d.type])
+    .attr("stroke-width", d => d.type==="implements"||d.type==="extends" ? 1.5 : 1)
+    .attr("stroke-dasharray", d => EDGE_DASH[d.type])
+    .attr("stroke-opacity", 0.6)
+    .attr("marker-end", d => `url(#arr-${d.type})`);
+
+  const nodeG = g.selectAll(".ge-node").data(nodes).enter().append("g")
+    .attr("class","ge-node")
+    .style("cursor","pointer")
+    .call(d3.drag()
+      .on("start",(e,d)=>{ if(!e.active) sim.alphaTarget(0.3).restart(); d.fx=d.x; d.fy=d.y; })
+      .on("drag", (e,d)=>{ d.fx=e.x; d.fy=e.y; })
+      .on("end",  (e,d)=>{ if(!e.active) sim.alphaTarget(0); d.fx=null; d.fy=null; }))
+    .on("click",(e,d)=>{
+      e.stopPropagation();
+      selectNode(d, nodes, edges);
+      if(window._showBottomSheet) window._showBottomSheet(d, nodes, edges);
+    });
+
+  nodeG.append("circle")
+    .attr("r", d => NODE_R[d.layer])
+    .attr("fill", d => NODE_COLOR[d.layer])
+    .attr("fill-opacity", 0.15)
+    .attr("stroke", d => NODE_COLOR[d.layer])
+    .attr("stroke-width", 1.5);
+
+  nodeG.append("text")
+    .text(d => d.label.length > 16 ? d.label.slice(0,15)+"…" : d.label)
+    .attr("text-anchor","middle")
+    .attr("dy","2.3em")
+    .attr("font-size","9")
+    .attr("font-family","'IBM Plex Mono',monospace")
+    .attr("fill","#3a4a5c")
+    .attr("pointer-events","none");
+
+  svg.on("click",()=>{
+    nodeG.selectAll("circle").attr("opacity",1).attr("stroke-width",1.5);
+    link.attr("stroke-opacity",0.6);
+    geDetailName.textContent = "No node selected";
+    geDetailName.style.color = "var(--steel)";
+    geDetailName.style.fontFamily = "var(--mono)";
+    geDetailName.style.fontSize = "0.75rem";
+    geDetailType.textContent = "";
+    geDetailDesc.textContent = "";
+    geConnections.innerHTML = '<li style="color:var(--steel);font-family:var(--mono);font-size:0.62rem;border:none;">—</li>';
+  });
+
+  sim.on("tick",()=>{
+    link
+      .attr("x1",d=>clamp(d.source.x,20,W-20))
+      .attr("y1",d=>clamp(d.source.y,20,H-20))
+      .attr("x2",d=>clamp(d.target.x,20,W-20))
+      .attr("y2",d=>clamp(d.target.y,20,H-20));
+    nodeG.attr("transform",d=>`translate(${clamp(d.x,20,W-20)},${clamp(d.y,20,H-20)})`);
+  });
+
+  // Cache panel DOM references
+  const geDetailName = document.getElementById("ge-detail-name");
+  const geDetailType = document.getElementById("ge-detail-type");
+  const geDetailDesc = document.getElementById("ge-detail-desc");
+  const geConnections = document.getElementById("ge-connections");
+
+  function selectNode(d, allNodes, allEdges) {
+    const connectedIds = new Set();
+    const conns = [];
+    allEdges.forEach(e=>{
+      if(e.source.id===d.id){ connectedIds.add(e.target.id); conns.push({node:e.target, type:e.type, dir:"→"}); }
+      if(e.target.id===d.id){ connectedIds.add(e.source.id); conns.push({node:e.source, type:e.type, dir:"←"}); }
+    });
+    nodeG.selectAll("circle")
+      .attr("opacity", n => n.id===d.id || connectedIds.has(n.id) ? 1 : 0.2)
+      .attr("stroke-width", n => n.id===d.id ? 2.5 : 1.5);
+    link.attr("stroke-opacity", e =>
+      e.source.id===d.id || e.target.id===d.id ? 1 : 0.1
+    );
+    geDetailName.textContent = d.label; geDetailName.style.color=""; geDetailName.style.fontFamily=""; geDetailName.style.fontSize="";
+    geDetailType.textContent = d.type + " · " + d.layer;
+    geDetailDesc.textContent = d.desc;
+    // Fix 3: populate graph-detail-sheet on mobile
+    if(window.innerWidth < 1100){
+      var gs = document.getElementById("geSheet");
+      if(gs){
+        document.getElementById("geSheetName").textContent = d.label;
+        document.getElementById("geSheetType").textContent = d.type + " · " + d.layer;
+        document.getElementById("geSheetDesc").textContent = d.desc;
+        gs.classList.add("open");
+      }
+    }
+    const ul = geConnections;
+    ul.innerHTML = conns.length ? conns.map(c=>`
+      <li>
+        <span class="conn-type" style="background:${EDGE_COLOR[c.type]};display:inline-block;width:8px;height:2px;${EDGE_DASH[c.type]?'border-top:2px dashed '+EDGE_COLOR[c.type]+';height:0;background:none':''}"></span>
+        <span style="color:var(--steel)">${c.dir}</span>
+        <strong>${c.node.label}</strong>
+        <span style="color:var(--steel);font-size:0.6rem">${c.type}</span>
+      </li>`).join('') :
+      '<li style="color:var(--steel);border:none">No connections</li>';
+  }
+
+  // Filter
+  window.filterGraph = function(btn, layer){
+    document.querySelectorAll('.ge-btn[data-filter]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    if(layer==="all"){
+      nodeG.style("display",null);
+      link.style("display",null);
+    } else {
+      nodeG.style("display", d => d.layer===layer ? null : "none");
+      link.style("display", e => {
+        const sn = nodes.find(n=>n.id===e.source.id||n.id===(e.source&&e.source.id));
+        const tn = nodes.find(n=>n.id===e.target.id||n.id===(e.target&&e.target.id));
+        const sl = e.source.layer || (sn&&sn.layer);
+        const tl = e.target.layer || (tn&&tn.layer);
+        return sl===layer && tl===layer ? null : "none";
+      });
+    }
+  };
+
+  window.resetGraph = function(){
+    nodeG.style("display",null);
+    link.style("display",null);
+    document.querySelectorAll('.ge-btn[data-filter]').forEach(b=>b.classList.remove('active'));
+    document.querySelector('.ge-btn[data-filter="all"]').classList.add('active');
+    sim.alpha(0.5).restart();
+    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+  };
+
+  // Event delegation for filter + reset buttons
+  document.querySelector('.graph-explorer-controls').addEventListener('click', e => {
+    const btn = e.target.closest('.ge-btn');
+    if (!btn) return;
+    if (btn.id === 'ge-reset-btn') { resetGraph(); return; }
+    const filter = btn.dataset.filter;
+    if (filter) filterGraph(btn, filter);
+  });
+
+  // Expose for schema
+  window._nesyNodes = NESY_NODES;
+  window._nesyEdges = NESY_EDGES;
+})();
+
+// ─── HERO MINI GRAPH (decorative, no panel) ──────────────────────────────────
+(function buildHeroGraph(){
+  const W=520, H=380;
+  const svg = d3.select("#hero-graph-svg").attr("viewBox",`0 0 ${W} ${H}`);
+  const nodes = NESY_NODES.filter(n=>n.layer==="Family"||n.layer==="System")
+    .map(n=>Object.assign({},n));
+  const edges = NESY_EDGES
+    .filter(e=>e.type==="implements"||e.type==="extends")
+    .map(e=>Object.assign({},e));
+
+  const g = svg.append("g");
+  const sim = d3.forceSimulation(nodes)
+    .force("link",d3.forceLink(edges).id(d=>d.id).distance(70).strength(0.5))
+    .force("charge",d3.forceManyBody().strength(-200))
+    .force("center",d3.forceCenter(W/2,H/2))
+    .force("collide",d3.forceCollide().radius(26));
+
+  const link = g.selectAll("line").data(edges).enter().append("line")
+    .attr("stroke",d=>EDGE_COLOR[d.type]).attr("stroke-width",1)
+    .attr("stroke-opacity",0.5)
+    .attr("stroke-dasharray",d=>EDGE_DASH[d.type]);
+
+  const nodeG = g.selectAll("g.hn").data(nodes).enter().append("g").attr("class","hn");
+  nodeG.append("circle")
+    .attr("r",d=>NODE_R[d.layer])
+    .attr("fill",d=>NODE_COLOR[d.layer]).attr("fill-opacity",0.12)
+    .attr("stroke",d=>NODE_COLOR[d.layer]).attr("stroke-width",1.5);
+  nodeG.append("text")
+    .text(d=>d.label.length>13?d.label.slice(0,12)+"…":d.label)
+    .attr("text-anchor","middle").attr("dy","2.2em")
+    .attr("font-size","8").attr("font-family","'IBM Plex Mono',monospace")
+    .attr("fill","#6b7f8f").attr("pointer-events","none");
+
+  sim.on("tick",()=>{
+    link.attr("x1",d=>clamp(d.source.x,15,W-15)).attr("y1",d=>clamp(d.source.y,15,H-15))
+        .attr("x2",d=>clamp(d.target.x,15,W-15)).attr("y2",d=>clamp(d.target.y,15,H-15));
+    nodeG.attr("transform",d=>`translate(${clamp(d.x,15,W-15)},${clamp(d.y,15,H-15)})`);
+  });
+})();
+
+// ─── KG DEMO GRAPH ────────────────────────────────────────────────────────────
+(function buildKGGraph(){
+  const KG_NODES = [
+    {id:"llm",     label:"LLM",                role:"Reasoning engine that traverses the knowledge graph to answer queries",         color:"#b84a2e", r:16},
+    {id:"kg",      label:"Knowledge Graph",     role:"Structured symbolic memory. Entities as nodes, relationships as typed edges",  color:"#c9952a", r:14},
+    {id:"entity1", label:"Drug Target",         role:"Entity node: a specific molecular target. Connected to mechanisms and trials",  color:"#3a4a5c", r:10},
+    {id:"entity2", label:"Mechanism of Action", role:"Relationship entity: how a drug affects a target. A typed symbolic edge",       color:"#3a4a5c", r:10},
+    {id:"entity3", label:"Clinical Trial",      role:"Evidence node: links targets to empirical validation data",                    color:"#3a4a5c", r:10},
+    {id:"entity4", label:"Compound",            role:"Chemical entity node: the drug candidate being evaluated",                     color:"#3a4a5c", r:10},
+    {id:"retrieval",label:"Structured Retrieval",role:"Symbolic scaffolding layer: graph traversal instead of parametric recall",    color:"#6b7f8f", r:11},
+    {id:"verifier",label:"Verifier",            role:"Optional: checks LLM output against graph constraints. Often absent in practice",color:"#b84a2e", r:10},
+    {id:"output",  label:"Grounded Answer",     role:"Output that cites graph paths — auditable, traceable, hallucination-reduced",  color:"#c9952a", r:11},
+  ];
+  const KG_EDGES = [
+    {source:"llm",     target:"retrieval", stroke:"#b84a2e", dash:null, label:"queries"},
+    {source:"retrieval",target:"kg",       stroke:"#c9952a", dash:null, label:"traverses"},
+    {source:"kg",      target:"entity1",   stroke:"#3a4a5c", dash:"4 3",label:"contains"},
+    {source:"kg",      target:"entity2",   stroke:"#3a4a5c", dash:"4 3",label:"contains"},
+    {source:"kg",      target:"entity3",   stroke:"#3a4a5c", dash:"4 3",label:"contains"},
+    {source:"kg",      target:"entity4",   stroke:"#3a4a5c", dash:"4 3",label:"contains"},
+    {source:"entity4", target:"entity2",   stroke:"#c9952a", dash:null, label:"hasAction"},
+    {source:"entity2", target:"entity1",   stroke:"#c9952a", dash:null, label:"targets"},
+    {source:"entity1", target:"entity3",   stroke:"#6b7f8f", dash:"3 3",label:"validatedIn"},
+    {source:"retrieval",target:"verifier", stroke:"#3a4a5c", dash:"4 3",label:"→ optional"},
+    {source:"verifier",target:"output",    stroke:"#b84a2e", dash:null, label:"validates"},
+    {source:"retrieval",target:"output",   stroke:"#c9952a", dash:null, label:"grounds"},
+  ];
+
+  const W=840, H=340;
+  const svg = d3.select("#kg-svg").attr("viewBox",`0 0 ${W} ${H}`);
+  const g = svg.append("g");
+
+  const kgNodes = KG_NODES.map(n=>Object.assign({},n));
+  const kgEdges = KG_EDGES.map(e=>Object.assign({},e));
+
+  const sim = d3.forceSimulation(kgNodes)
+    .force("link",d3.forceLink(kgEdges).id(d=>d.id).distance(90).strength(0.4))
+    .force("charge",d3.forceManyBody().strength(-250))
+    .force("center",d3.forceCenter(W/2,H/2))
+    .force("collide",d3.forceCollide().radius(30));
+
+  const link = g.selectAll("line").data(kgEdges).enter().append("line")
+    .attr("stroke",d=>d.stroke).attr("stroke-width",1.5)
+    .attr("stroke-dasharray",d=>d.dash).attr("stroke-opacity",0.55);
+
+  const nodeG = g.selectAll("g.kn").data(kgNodes).enter().append("g").attr("class","kn")
+    .style("cursor","default")
+    .on("mouseenter",(e,d)=>{
+      document.getElementById("kg-detail").innerHTML =
+        `<strong style="color:var(--ink)">${d.label}</strong> &nbsp;—&nbsp; ${d.role}`;
+    })
+    .on("mouseleave",()=>{
+      document.getElementById("kg-detail").textContent = "Hover any node to see its role in the knowledge graph.";
+    });
+
+  nodeG.append("circle")
+    .attr("r",d=>d.r).attr("fill",d=>d.color).attr("fill-opacity",0.15)
+    .attr("stroke",d=>d.color).attr("stroke-width",1.5);
+
+  nodeG.append("text")
+    .text(d=>d.label.length>13?d.label.slice(0,12)+"…":d.label)
+    .attr("text-anchor","middle").attr("dy","2.1em")
+    .attr("font-size","9").attr("font-family","'IBM Plex Mono',monospace")
+    .attr("fill","#3a4a5c").attr("pointer-events","none");
+
+  sim.on("tick",()=>{
+    link.attr("x1",d=>clamp(d.source.x,15,W-15)).attr("y1",d=>clamp(d.source.y,15,H-15))
+        .attr("x2",d=>clamp(d.target.x,15,W-15)).attr("y2",d=>clamp(d.target.y,15,H-15));
+    nodeG.attr("transform",d=>`translate(${clamp(d.x,15,W-15)},${clamp(d.y,15,H-15)})`);
+  });
+})();
+
+// ─── SCHEMA PANEL ─────────────────────────────────────────────────────────────
+// toggleSchema replaced by native <details> toggle — Fix 5
+(function initSchema(){
+  var sd = document.getElementById("schema-section");
+  if (!sd) return;
+  function populateSchema(){
+    if(!document.getElementById("schema-pre").textContent && window._nesyNodes){
+      var sample = {
+        nodes: window._nesyNodes.slice(0,3).map(function(n){return{id:n.id,label:n.label,layer:n.layer,type:n.type,desc:n.desc}}),
+        edges: window._nesyEdges.slice(0,4).map(function(e){return{source:e.source,target:e.target,type:e.type}}),
+        "_comment": "Full dataset: "+window._nesyNodes.length+" nodes, "+window._nesyEdges.length+" edges"
+      };
+      document.getElementById("schema-pre").innerHTML = syntaxHighlight(JSON.stringify(sample,null,2));
+    }
+  }
+  sd.addEventListener("toggle", function(){
+    var icon = document.getElementById("schema-icon");
+    if (icon) icon.textContent = sd.open ? "− Collapse" : "+ Expand";
+    if (sd.open) populateSchema();
+  });
+})();
+
+function syntaxHighlight(json){
+  return json
+    .replace(/(".*?")(\s*:)/g,'<span class="tok-key">$1</span>$2')
+    .replace(/:\s*(".*?")/g,': <span class="tok-str">$1</span>')
+    .replace(/:\s*(\d+\.?\d*)/g,': <span class="tok-num">$1</span>');
+}
+
+// ─── UTILITIES ────────────────────────────────────────────────────────────────
+function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+
+// ─── READING PROGRESS ─────────────────────────────────────────────────────────
+const progressBar = document.getElementById("progress-bar");
+let _rafScroll = false;
+window.addEventListener("scroll",()=>{
+  if (_rafScroll) return;
+  _rafScroll = true;
+  requestAnimationFrame(() => {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const p = scrollable > 0 ? Math.min(100, Math.max(0, (window.scrollY / scrollable) * 100)) : 0;
+    progressBar.style.width = p + "%";
+    progressBar.setAttribute("aria-valuenow", Math.round(p));
+    _rafScroll = false;
+  });
+}, {passive: true});
+
+// ─── FADE IN OBSERVER ─────────────────────────────────────────────────────────
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add("visible");
+      e.target.querySelectorAll(".bar-fill").forEach(b=>b.classList.add("animated"));
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:0.08});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+// ─── TOC ACTIVE ───────────────────────────────────────────────────────────────
+const tocObs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll(".toc-link").forEach(l=>l.classList.remove("active"));
+      const a = document.querySelector(`.toc-link[href="#${e.target.id}"]`);
+      if(a) a.classList.add("active");
+    }
+  });
+},{threshold:0.3});
+document.querySelectorAll("article[id],section[id]").forEach(s=>tocObs.observe(s));
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(btn,panelId){
+  btn.closest(".tab-nav").querySelectorAll(".tab-btn").forEach(b=>{b.classList.remove("active");b.setAttribute("aria-selected","false");b.setAttribute("tabindex","-1");});
+  btn.closest(".tabs").querySelectorAll(".tab-panel").forEach(p=>{p.classList.remove("active");p.setAttribute("hidden","");});
+  btn.classList.add("active"); btn.setAttribute("aria-selected","true"); btn.setAttribute("tabindex","0");
+  const panel = document.getElementById(panelId);
+  if(panel){
+    panel.classList.add("active"); panel.removeAttribute("hidden");
+    panel.querySelectorAll(".bar-fill").forEach(b=>{
+      b.classList.remove("animated");
+      requestAnimationFrame(()=>requestAnimationFrame(()=>b.classList.add("animated")));
+    });
+  }
+}
+// Tab event delegation: click + keyboard
+document.querySelectorAll(".tab-nav").forEach(nav => {
+  nav.addEventListener("click", e => {
+    const btn = e.target.closest(".tab-btn");
+    if (!btn) return;
+    const panelId = btn.getAttribute("aria-controls");
+    if (panelId) switchTab(btn, panelId);
+  });
+  nav.addEventListener("keydown", e => {
+    const btn = e.target.closest(".tab-btn");
+    if (!btn) return;
+    const btns = [...nav.querySelectorAll(".tab-btn")];
+    const i = btns.indexOf(btn);
+    let next;
+    if (e.key === "ArrowRight") next = btns[(i + 1) % btns.length];
+    if (e.key === "ArrowLeft")  next = btns[(i - 1 + btns.length) % btns.length];
+    if (next) { next.click(); next.focus(); }
+  });
+});
+
+// ─── EVIDENCE → GRAPH CROSS-LINKS ────────────────────────────────────────────
+document.querySelectorAll(".evidence-graph-link").forEach(link => {
+  link.addEventListener("click", e => {
+    e.preventDefault();
+    const nodeId = link.dataset.node;
+    // Scroll to graph explorer
+    const ge = document.getElementById("explore");
+    if (ge) ge.scrollIntoView({behavior:"smooth", block:"start"});
+    // After scroll, simulate node click in the graph
+    setTimeout(() => {
+      const nodeEls = document.querySelectorAll(".ge-node");
+      nodeEls.forEach(g => {
+        const d = d3.select(g).datum();
+        if (d && d.id === nodeId) {
+          g.dispatchEvent(new MouseEvent("click", {bubbles:true}));
+        }
+      });
+    }, 600);
+  });
+});
+
+// ─── EVIDENCE ROW CROSS-LINKS (Fix 4) ────────────────────────────────────────
+document.querySelectorAll("tr[data-node-id]").forEach(row => {
+  row.addEventListener("click", e => {
+    // Don't hijack if they clicked the existing ⬡ link
+    if (e.target.closest(".evidence-graph-link")) return;
+    const nodeId = row.dataset.nodeId;
+    const ge = document.getElementById("explore");
+    if (ge) ge.scrollIntoView({behavior:"smooth", block:"start"});
+    setTimeout(() => {
+      document.querySelectorAll(".ge-node").forEach(g => {
+        const d = d3.select(g).datum();
+        if (d && d.id === nodeId) {
+          g.dispatchEvent(new MouseEvent("click", {bubbles:true}));
+        }
+      });
+    }, 600);
+  });
+});
+
+// ─── BOTTOM SHEET (mobile graph detail fallback) ─────────────────────────────
+const bottomSheet = document.getElementById("graph-bottom-sheet");
+function showBottomSheet(d, allNodes, allEdges) {
+  if (!bottomSheet || window.innerWidth > 1100) return;
+  document.getElementById("bs-detail-name").textContent = d.label;
+  document.getElementById("bs-detail-name").style.color = "";
+  document.getElementById("bs-detail-name").style.fontFamily = "";
+  document.getElementById("bs-detail-name").style.fontSize = "";
+  document.getElementById("bs-detail-type").textContent = d.type + " · " + d.layer;
+  document.getElementById("bs-detail-desc").textContent = d.desc;
+  const conns = [];
+  allEdges.forEach(e => {
+    if (e.source.id === d.id) conns.push({node: e.target, type: e.type, dir: "→"});
+    if (e.target.id === d.id) conns.push({node: e.source, type: e.type, dir: "←"});
+  });
+  const ul = document.getElementById("bs-connections");
+  ul.innerHTML = conns.length ? conns.map(c =>
+    `<li><span style="color:var(--steel)">${c.dir}</span> <strong>${c.node.label}</strong> <span style="color:var(--steel);font-size:0.6rem">${c.type}</span></li>`
+  ).join('') : '<li style="color:var(--steel);border:none">No connections</li>';
+  bottomSheet.classList.add("open");
+  // Hide section pills while sheet is open
+  const pills = document.getElementById("section-pills");
+  if (pills) pills.style.display = "none";
+}
+window.closeBottomSheet = function() {
+  if (bottomSheet) bottomSheet.classList.remove("open");
+  const pills = document.getElementById("section-pills");
+  if (pills) pills.style.display = "";
+};
+// expose for use from graph builder
+window._showBottomSheet = showBottomSheet;
+
+// ─── SECTION PILL ACTIVE STATE ───────────────────────────────────────────────
+const pillObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll(".section-pills a").forEach(a => a.classList.remove("active"));
+      const pill = document.querySelector(`.section-pills a[href="#${e.target.id}"]`);
+      if (pill) pill.classList.add("active");
+    }
+  });
+}, {threshold: 0.2});
+document.querySelectorAll("article[id],section[id]").forEach(s => pillObs.observe(s));
+
+// Hide pills until user scrolls past hero
+const pillNav = document.getElementById("section-pills");
+if (pillNav) {
+  const heroEl = document.querySelector(".hero");
+  if (heroEl) {
+    const heroObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        pillNav.style.opacity = e.isIntersecting ? "0" : "1";
+        pillNav.style.pointerEvents = e.isIntersecting ? "none" : "auto";
+      });
+    }, {threshold: 0.1});
+    heroObs.observe(heroEl);
+  }
+}
+</script>
+
+<div class="graph-detail-sheet" id="geSheet"><button onclick="document.getElementById('geSheet').classList.remove('open')" style="float:right;background:none;border:1px solid var(--rule);color:var(--ink);padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;font-family:var(--mono);font-size:0.7rem;">Close</button><div id="geSheetName" style="font-weight:700;margin-bottom:0.3rem;"></div><div id="geSheetType" style="font-family:var(--mono);font-size:0.6rem;color:var(--steel);margin-bottom:0.5rem;"></div><p id="geSheetDesc" style="font-size:0.82rem;color:var(--slate);line-height:1.6;margin:0;"></p></div>
+</body>
+</html>

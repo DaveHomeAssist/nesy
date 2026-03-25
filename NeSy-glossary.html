@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossary — Neuro-Symbolic AI in 2026 · Veritas Canvas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&amp;family=IBM+Plex+Mono:wght@300;400;500&amp;family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0d0d0d;
+  --paper: #f5f0e8;
+  --cream: #ede7d3;
+  --rust: #b84a2e;
+  --gold: #c9952a;
+  --slate: #3a4a5c;
+  --steel: #6b7f8f;
+  --pale: #f9f5ee;
+  --rule: rgba(13,13,13,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Libre Baskerville', serif;
+  --display: 'Playfair Display', serif;
+  --llm: #8a6a43;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body { background: var(--paper); color: var(--ink); font-family: var(--serif); line-height: 1.75; overflow-x: hidden; }
+
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat:repeat; background-size:256px 256px; opacity:0.6;
+}
+
+.masthead { position:relative; z-index:10; border-bottom:2px solid var(--ink); padding:1rem 2.5rem; display:flex; align-items:center; justify-content:space-between; background:var(--paper); }
+.masthead-logo { font-family:var(--mono); font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--steel); }
+.masthead-logo span { color:var(--rust); }
+.masthead-nav { display:flex; gap:2rem; }
+.masthead-nav a { font-family:var(--mono); font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; color:var(--steel); transition:color 0.2s; }
+.masthead-nav a:hover { color:var(--rust); }
+
+.glossary-hero {
+  position:relative; z-index:1;
+  border-bottom:2px solid var(--ink);
+  padding:4rem 4rem 3rem;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:3rem;
+  align-items:end;
+}
+.hero-eyebrow { font-family:var(--mono); font-size:0.7rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--rust); margin-bottom:1rem; }
+.glossary-hero h1 {
+  font-family:var(--display); font-size:clamp(2.2rem,4vw,3.6rem);
+  font-weight:900; line-height:1.08; letter-spacing:-0.02em;
+}
+.glossary-hero h1 em { font-style:italic; color:var(--rust); }
+.glossary-hero .hero-sub {
+  margin-top:1.25rem; font-size:0.95rem; color:var(--slate);
+  max-width:52ch; line-height:1.8;
+}
+.hero-meta { display:flex; gap:2rem; font-family:var(--mono); font-size:0.65rem; letter-spacing:0.1em; color:var(--steel); flex-wrap:wrap; align-self:end; }
+.hero-meta span { text-transform:uppercase; }
+.hero-meta strong { color:var(--ink); }
+
+.letter-index {
+  position:sticky; top:0; z-index:20;
+  background:var(--cream);
+  border-bottom:1px solid var(--rule);
+  padding:0.75rem 4rem;
+  display:flex; flex-wrap:wrap; gap:0.25rem;
+}
+.letter-index a {
+  font-family:var(--mono); font-size:0.62rem;
+  letter-spacing:0.12em; text-transform:uppercase;
+  text-decoration:none; color:var(--steel);
+  padding:0.3rem 0.55rem;
+  transition:color 0.2s, background 0.2s;
+}
+.letter-index a:hover,
+.letter-index a.active {
+  color:#fff; background:var(--rust);
+}
+
+.glossary-body {
+  position:relative; z-index:1;
+  max-width:1300px; margin:0 auto;
+  padding:3rem 4rem 5rem;
+}
+
+.letter-group { margin-bottom:3.5rem; }
+.letter-heading {
+  display:flex; align-items:center; gap:1.25rem;
+  margin-bottom:1.75rem;
+  scroll-margin-top:3.5rem;
+}
+.letter-glyph {
+  font-family:var(--display); font-size:2.6rem; font-weight:900;
+  color:var(--rust); line-height:1; min-width:2.2rem; text-align:center;
+}
+.letter-rule { flex:1; height:1px; background:var(--ink); opacity:0.12; }
+
+.term-entry {
+  display:grid;
+  grid-template-columns:14rem 1fr;
+  gap:1.5rem;
+  padding:1.1rem 0;
+  border-bottom:1px solid var(--rule);
+  align-items:baseline;
+}
+.term-entry:last-child { border-bottom:none; }
+.term-name {
+  font-family:var(--display); font-size:1rem; font-weight:700;
+  line-height:1.35; color:var(--ink);
+}
+.term-tag {
+  display:inline-block;
+  font-family:var(--mono); font-size:0.52rem;
+  letter-spacing:0.14em; text-transform:uppercase;
+  padding:0.1rem 0.4rem; margin-left:0.5rem;
+  border:1px solid currentColor; vertical-align:middle;
+  position:relative; top:-1px;
+}
+.tag-arch { color:var(--rust); }
+.tag-eval { color:var(--gold); }
+.tag-gov  { color:var(--slate); }
+.tag-core { color:var(--steel); }
+.tag-llm  { color:var(--llm); }
+.term-def {
+  font-size:0.9rem; color:var(--slate); line-height:1.7;
+}
+.term-def mark {
+  background:rgba(201,149,42,0.15); padding:0 0.15rem;
+}
+
+.glossary-note {
+  margin:2.5rem 0;
+  padding:1.1rem 1.4rem;
+  background:var(--cream);
+  border-left:4px solid var(--rust);
+  font-size:0.9rem; color:var(--slate); line-height:1.65;
+}
+.glossary-note strong { color:var(--ink); }
+
+footer { border-top:2px solid var(--ink); padding:2.5rem 4rem; display:flex; align-items:center; justify-content:space-between; position:relative; z-index:1; background:var(--cream); }
+footer p { font-family:var(--mono); font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--steel); margin:0; }
+footer a { color:var(--rust); text-decoration:none; }
+footer a:hover { text-decoration:underline; }
+footer .footer-brand { font-family:var(--display); font-size:1.1rem; font-weight:700; color:var(--ink); }
+
+@media(max-width:900px){
+  .glossary-hero{grid-template-columns:1fr;padding:3rem 2rem 2rem}
+  .hero-meta{margin-top:1rem}
+  .letter-index{padding:0.6rem 1.5rem}
+  .glossary-body{padding:2rem 2rem 4rem}
+  .term-entry{grid-template-columns:1fr;gap:0.3rem}
+  footer{flex-direction:column;gap:1rem;text-align:center;padding:2rem}
+  .masthead{padding:1rem 1.5rem}
+  .masthead-nav{display:none}
+}
+
+@media print {
+  body::before{display:none}
+  .letter-index{position:static;border:none;padding:0.5rem 0}
+  .glossary-hero{border-bottom:2px solid #000;padding:2rem 0}
+  .glossary-body{padding:2rem 0}
+  footer{border-top:2px solid #000;padding:1.5rem 0}
+}
+
+.fade-in { opacity:0; transform:translateY(12px); animation:fadeUp 0.5s ease forwards; }
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+
+<header class="masthead" role="banner">
+  <div class="masthead-logo"><span>Veritas</span> Canvas</div>
+  <nav class="masthead-nav" aria-label="Document navigation">
+    <a href="./NeSy.html">Brief</a>
+    <a href="./NeSy-glossary.html" style="color:var(--rust);" aria-current="page">Glossary</a>
+  </nav>
+</header>
+
+<section class="glossary-hero fade-in" aria-labelledby="glossary-heading">
+  <div>
+    <p class="hero-eyebrow">Reference · Section 10</p>
+    <h1 id="glossary-heading">Working <em>Glossary</em></h1>
+    <p class="hero-sub">Key terms as used in this brief. Definitions are scoped to neuro-symbolic AI in 2026, not general-purpose dictionary entries.</p>
+  </div>
+  <div class="hero-meta">
+    <span>Terms <strong>61</strong></span>
+    <span>Updated <strong>March 2026</strong></span>
+  </div>
+</section>
+
+<nav class="letter-index" aria-label="Alphabetical index">
+  <a href="#letter-A">A</a>
+  <a href="#letter-C">C</a>
+  <a href="#letter-D">D</a>
+  <a href="#letter-E">E</a>
+  <a href="#letter-F">F</a>
+  <a href="#letter-G">G</a>
+  <a href="#letter-H">H</a>
+  <a href="#letter-K">K</a>
+  <a href="#letter-L">L</a>
+  <a href="#letter-M">M</a>
+  <a href="#letter-N">N</a>
+  <a href="#letter-O">O</a>
+  <a href="#letter-P">P</a>
+  <a href="#letter-R">R</a>
+  <a href="#letter-S">S</a>
+  <a href="#letter-T">T</a>
+  <a href="#letter-V">V</a>
+</nav>
+
+<div class="glossary-body">
+
+<div class="glossary-note">
+  <strong>Scope note.</strong> This glossary tracks how terms are used <em>in this brief</em>, not universal definitions. Where a term has a broader meaning elsewhere, the entry reflects the narrower sense applied to neuro-symbolic design, evidence, and deployment.
+</div>
+
+<section class="letter-group fade-in" id="letter-A">
+  <div class="letter-heading"><span class="letter-glyph">A</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">AGI <span class="term-tag tag-core">Core</span></div>
+    <div class="term-def">Artificial general intelligence. A hypothetical system with broad, human-level capability across many domains, not narrow task performance. Discussed in the appendix as context, not as a near-term design target.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Architecture Family <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A category of system design that groups related approaches by <mark>where and how</mark> symbolic reasoning is integrated, for example differentiable logic, neural theorem proving, and LLM symbolic scaffolding.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Auditability <span class="term-tag tag-gov">Governance</span></div>
+    <div class="term-def">The ability to inspect how a system produced an output, including rules fired, graph paths traversed, or intermediate decisions recorded. A core evaluation dimension in section 5.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-C">
+  <div class="letter-heading"><span class="letter-glyph">C</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">Chain of Reasoning <span class="term-tag tag-eval">Evaluation</span></div>
+    <div class="term-def">A visible or reconstructable sequence of intermediate steps used to justify a model output. Distinct from chain-of-thought prompting; here the chain is an artifact, not a generation strategy.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Composite AI <span class="term-tag tag-core">Core</span></div>
+    <div class="term-def">An enterprise term for systems that combine multiple AI techniques, including machine learning, rules, optimization, and knowledge graphs. Often the framing under which NeSy enters Gartner-style industry analysis.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Constraint as Loss <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A training approach where logical or structural rules are converted into differentiable optimization objectives rather than enforced only at inference time. Central to the differentiable logic family.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Constraint Satisfaction <span class="term-tag tag-eval">Evaluation</span></div>
+    <div class="term-def">Ensuring outputs obey predefined rules, logic, or invariants. The first dimension in the evaluation framework, E.1.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Curated Graph <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A knowledge graph built and maintained with explicit human or domain oversight rather than auto-extracted without review. Quality here directly affects retrieval reliability.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-D">
+  <div class="letter-heading"><span class="letter-glyph">D</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">DeepProbLog <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A neuro-symbolic framework combining neural networks with probabilistic logic programming, allowing learning and reasoning to operate jointly. An exemplar of the probabilistic logic programming family.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Differentiable Logic <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">Methods that relax symbolic rules into continuous forms so they can be optimized through gradients. Architecture family 01 in this brief.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Distribution Shift <span class="term-tag tag-eval">Evaluation</span></div>
+    <div class="term-def">A change between training conditions and deployment conditions that degrades model performance. One of the key stresses that motivates adding symbolic structure.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Dual Process Theory <span class="term-tag tag-core">Core</span></div>
+    <div class="term-def">A cognitive framing contrasting fast intuitive processing with slower deliberate reasoning. Used metaphorically in NeSy literature; the mapping is suggestive, not precise.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-E">
+  <div class="letter-heading"><span class="letter-glyph">E</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">Embedding <span class="term-tag tag-core">Core</span></div>
+    <div class="term-def">A learned numerical representation of data, words, entities, or concepts used to encode meaning for neural models. The primary interface between neural and symbolic components in many hybrid architectures.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Evidence Type <span class="term-tag tag-eval">Evaluation</span></div>
+    <div class="term-def">The category of support behind a claim: peer-reviewed research, case study, vendor statement, or press coverage. Tracked explicitly in the evidence table.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Explicit Knowledge <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">Structured information represented as rules, ontologies, schemas, or graphs rather than implicit patterns encoded in model weights. The symbolic half of the NeSy equation.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Explainability <span class="term-tag tag-gov">Governance</span></div>
+    <div class="term-def">The degree to which a system's behavior can be described in terms a human can understand. In NeSy, typically grounded in symbolic traces and auditable artifacts rather than post-hoc saliency maps.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-F">
+  <div class="letter-heading"><span class="letter-glyph">F</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">Formal Logic <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A precise symbolic system for representing statements, rules, and inference with mathematically defined semantics. The classical foundation that differentiable and probabilistic NeSy methods relax or extend.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-G">
+  <div class="letter-heading"><span class="letter-glyph">G</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">Governance <span class="term-tag tag-gov">Governance</span></div>
+    <div class="term-def">The policies, controls, documentation, and oversight practices used to manage AI risk and accountability. A primary driver of NeSy adoption in the LLM era.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">GraphRAG <span class="term-tag tag-llm">LLM-Era</span></div>
+    <div class="term-def">A retrieval architecture that uses a <mark>knowledge graph as structured memory</mark> to improve grounded retrieval and multi-hop reasoning for LLMs. The most common commercial pattern today, and architecture family 05 in operational form.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-H">
+  <div class="letter-heading"><span class="letter-glyph">H</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">Hallucination <span class="term-tag tag-eval">Evaluation</span></div>
+    <div class="term-def">A model output that is false, unsupported, internally inconsistent, or asserted with unjustified confidence. The engineering problem that makes NeSy feel urgent in production.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">High-Risk System <span class="term-tag tag-gov">Governance</span></div>
+    <div class="term-def">In regulatory contexts such as the EU AI Act, an AI system subject to stricter obligations because its use case can materially affect safety, rights, or critical decisions.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Human Oversight <span class="term-tag tag-gov">Governance</span></div>
+    <div class="term-def">A governance requirement that people can monitor, intervene in, or review AI behavior where needed. One of the explicit obligations imposed on high-risk systems.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-K">
+  <div class="letter-heading"><span class="letter-glyph">K</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">Knowledge Acquisition <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">Creating or maintaining the rules, ontologies, schemas, and graphs a NeSy system depends on. Identified as one of the hardest operational costs: expensive to build, brittle when domains evolve.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Knowledge Graph <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A structured network of entities and relationships used to represent facts, support retrieval, and constrain reasoning. The symbolic backbone for GraphRAG and many scaffolding-based NeSy designs.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-L">
+  <div class="letter-heading"><span class="letter-glyph">L</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">LLM <span class="term-tag tag-core">Core</span></div>
+    <div class="term-def">Large language model. A neural model trained on large text corpora to predict and generate language. The system that NeSy techniques increasingly aim to make more reliable.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">LLM Symbolic Scaffolding <span class="term-tag tag-llm">LLM-Era</span></div>
+    <div class="term-def">A design pattern where an LLM is supported by external symbolic structures such as schemas, graphs, tool interfaces, planners, or verifiers. Architecture family 05 and the most-deployed NeSy pattern in 2026.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Logic Tensor Networks <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A NeSy approach combining first-order logic with differentiable learning so logical constraints can guide neural training directly through the loss function.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Logical Consistency <span class="term-tag tag-eval">Evaluation</span></div>
+    <div class="term-def">The property that outputs do not contradict stated rules, earlier claims, or required invariants. Tracked as evaluation dimension E.1.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Logical Neural Networks <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">Neural architectures that preserve interpretable logical structure while learning thresholds or rule strengths from data. Designed to keep the symbolic layer legible rather than opaque.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-M">
+  <div class="letter-heading"><span class="letter-glyph">M</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">Missing Data <span class="term-tag tag-eval">Evaluation</span></div>
+    <div class="term-def">Absent or incomplete evidence that stresses purely neural systems and reveals the value of explicit reasoning structures. A key test condition for shift robustness.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Modular Integration Framework <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A staged view of NeSy design where symbolic components enter during preprocessing, embedding, reasoning, or postprocessing. Frames the question of where the symbolic layer actually lives.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-N">
+  <div class="letter-heading"><span class="letter-glyph">N</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">NeSy <span class="term-tag tag-core">Core</span></div>
+    <div class="term-def">Short for neuro-symbolic AI. The umbrella term for systems combining neural learning with symbolic reasoning, and the subject of this brief.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Neural Component <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">The learned part of a hybrid system, typically responsible for pattern recognition, representation learning, or language generation. The fast side of the metaphor.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Neural Theorem Proving <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">Methods blending theorem proving with neural representations, enabling differentiable or learned forms of logical inference. Architecture family 02.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Neuro-Symbolic AI <span class="term-tag tag-core">Core</span></div>
+    <div class="term-def">AI that combines deep-learning methods with structured symbolic machinery such as logic, rules, programs, or knowledge graphs. See <em>NeSy</em> for the abbreviation used throughout the brief.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-O">
+  <div class="letter-heading"><span class="letter-glyph">O</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">OOD Behavior <span class="term-tag tag-eval">Evaluation</span></div>
+    <div class="term-def">Out-of-distribution behavior. How a system performs when inputs differ meaningfully from its training data. A primary motivation for symbolic guardrails.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Ontology <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A formal representation of concepts and relationships within a domain. Often the structured backbone behind knowledge graphs, schemas, and constrained retrieval.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-P">
+  <div class="letter-heading"><span class="letter-glyph">P</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">Parametric Memory <span class="term-tag tag-core">Core</span></div>
+    <div class="term-def">Facts or patterns stored implicitly inside model weights rather than retrieved from an external source. The complement of explicit knowledge, and the part NeSy aims to supplement.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Postprocessing <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A stage after generation where outputs are checked, corrected, constrained, or reformatted using symbolic logic or rules. One of the modular integration points.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Probabilistic Logic <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A framework combining logical structure with uncertainty so rules and facts can carry probabilistic weight. The foundation for DeepProbLog and architecture family 03.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Production AI <span class="term-tag tag-gov">Governance</span></div>
+    <div class="term-def">AI deployed in real operational settings where reliability, latency, governance, and maintainability matter, as opposed to research prototypes or benchmarks.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Program-Centric Reasoning <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">An approach where symbolic structure takes the form of executable programs, planners, or procedural logic. Architecture family 04, focused on systematic generalization rather than narrow memorization.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Proof Search Explosion <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A scalability problem where possible reasoning paths grow too quickly for efficient inference. The primary computational bottleneck in neural theorem proving.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-R">
+  <div class="letter-heading"><span class="letter-glyph">R</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">Regulatory Pressure <span class="term-tag tag-gov">Governance</span></div>
+    <div class="term-def">The practical force created by laws, standards, and compliance obligations that pushes organizations toward traceable, robust AI systems. Driver 01 in the brief.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Reliability Shift <span class="term-tag tag-core">Core</span></div>
+    <div class="term-def">The move from optimizing only for fluent generation toward optimizing for <mark>correctness, consistency, traceability, and governed deployment</mark>. The central thesis of the brief.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Retrieval <span class="term-tag tag-llm">LLM-Era</span></div>
+    <div class="term-def">Fetching external information, documents, or graph nodes to ground model outputs in evidence. Necessary, but not sufficient, for verification.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Robustness <span class="term-tag tag-eval">Evaluation</span></div>
+    <div class="term-def">The ability to remain reliable under perturbations, edge cases, missing evidence, or changing conditions. Evaluation dimension E.3.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Rule Set <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A defined collection of symbolic constraints or logical statements used to guide, restrict, or verify system behavior.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-S">
+  <div class="letter-heading"><span class="letter-glyph">S</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">Schema <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A structured definition of allowed fields, types, or relationships used to constrain data and outputs. One of the lightest forms of symbolic structure, and often the first thing added to an LLM pipeline.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Structured Retrieval <span class="term-tag tag-llm">LLM-Era</span></div>
+    <div class="term-def">Retrieval that depends on organized entities, relations, or typed records rather than only free-text similarity. The mechanism behind GraphRAG's advantage over flat vector search.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Symbolic Component <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">The explicit reasoning layer in a hybrid system: rules, graphs, logic, planners, or verifiers. The slower side of the metaphor.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Symbolic Machinery <span class="term-tag tag-core">Core</span></div>
+    <div class="term-def">The collection of formal or semi-formal structures used for explicit reasoning: logic, rules, programs, and knowledge graphs. An umbrella term broader than any single technique.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Symbolic Postprocessing <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">Applying rules or verification after neural generation to improve consistency, validity, or compliance. The lowest-friction NeSy integration point, and one of the most commonly deployed.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Symbolic Reasoning <span class="term-tag tag-core">Core</span></div>
+    <div class="term-def">Reasoning performed through explicit representations such as logic, rules, programs, or graphs rather than learned statistical patterns.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">System 1 / System 2 <span class="term-tag tag-core">Core</span></div>
+    <div class="term-def">A shorthand metaphor for fast intuitive processing versus slower deliberate reasoning. Applied informally to describe the neural-symbolic split; the brief treats it as metaphor, not mechanism.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-T">
+  <div class="letter-heading"><span class="letter-glyph">T</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">Theorem Proving <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">A formal reasoning process that derives conclusions from logical premises using valid inference rules. The classical technique softened by neural methods in architecture family 02.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Tool Call <span class="term-tag tag-llm">LLM-Era</span></div>
+    <div class="term-def">A model action that invokes an external function, system, or API as part of a reasoning workflow. A lightweight form of symbolic scaffolding now standard in LLM agent architectures.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Traceability <span class="term-tag tag-gov">Governance</span></div>
+    <div class="term-def">The ability to follow a system's output back through evidence, intermediate artifacts, and decision points. Evaluation dimension E.2 and a regulatory obligation for high-risk systems.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Training Objective <span class="term-tag tag-arch">Architecture</span></div>
+    <div class="term-def">The mathematical goal optimized during model training. In NeSy, this may include data fit alongside constraint penalties or consistency losses, the constraint-as-loss pattern.</div>
+  </div>
+</section>
+
+<section class="letter-group fade-in" id="letter-V">
+  <div class="letter-heading"><span class="letter-glyph">V</span><span class="letter-rule"></span></div>
+
+  <div class="term-entry">
+    <div class="term-name">Verifier <span class="term-tag tag-eval">Evaluation</span></div>
+    <div class="term-def">A component that checks whether an output satisfies rules, matches evidence, or meets logical and structural requirements. The presence or absence of a verifier is the key dividing line between reliable and merely symbolic-looking pipelines.</div>
+  </div>
+
+  <div class="term-entry">
+    <div class="term-name">Verifiable Steps <span class="term-tag tag-eval">Evaluation</span></div>
+    <div class="term-def">Intermediate actions or artifacts that can be independently checked rather than accepted as opaque model behavior. The practical unit of traceability in a deployed NeSy system.</div>
+  </div>
+</section>
+
+<div class="glossary-note" style="margin-top:4rem;">
+  <strong>Tag legend.</strong> <span style="color:var(--rust)">Architecture</span> for design patterns and structural components. <span style="color:var(--gold)">Evaluation</span> for measurement, testing, and evidence. <span style="color:var(--slate)">Governance</span> for policy, regulation, and oversight. <span style="color:var(--llm)">LLM-Era</span> for patterns specific to the post-2023 landscape. <span style="color:var(--steel)">Core</span> for foundational terms used across the brief.
+</div>
+
+</div>
+
+<footer role="contentinfo">
+  <div class="footer-brand">Veritas Canvas</div>
+  <p>Working Glossary — Neuro-Symbolic AI in 2026<br>Architectures, Evidence &amp; the LLM Reliability Shift</p>
+  <p><a href="./NeSy.html">Return to brief</a> · Section 10 · 2026</p>
+</footer>
+
+<script>
+(function(){
+  const links = document.querySelectorAll('.letter-index a');
+  const groups = document.querySelectorAll('.letter-group');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { rootMargin:'-40% 0px -55% 0px' });
+  groups.forEach(g => observer.observe(g));
+})();
+
+(function(){
+  const els = document.querySelectorAll('.fade-in');
+  els.forEach((el, i) => { el.style.animationDelay = (i * 0.06) + 's'; });
+})();
+</script>
+
+</body>
+</html>
