@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neuro-Symbolic AI in 2026: Architectures, Evidence, and the LLM Reliability Shift</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&amp;family=IBM+Plex+Mono:wght@300;400;500&amp;family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0d0d0d;
+  --paper: #f5f0e8;
+  --cream: #ede7d3;
+  --rust: #b84a2e;
+  --gold: #c9952a;
+  --slate: #3a4a5c;
+  --steel: #6b7f8f;
+  --pale: #f9f5ee;
+  --rule: rgba(13,13,13,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Libre Baskerville', serif;
+  --display: 'Playfair Display', serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  opacity: 0.6;
+}
+
+/* ── MASTHEAD ── */
+.masthead {
+  position: relative; z-index: 2;
+  border-bottom: 2px solid var(--ink);
+  padding: 1rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--paper);
+}
+.masthead-logo {
+  font-family: var(--mono);
+  font-size: 0.7rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--steel);
+}
+.masthead-logo span { color: var(--rust); }
+.masthead-nav { display: flex; gap: 2rem; }
+.masthead-nav a {
+  font-family: var(--mono); font-size: 0.65rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  text-decoration: none; color: var(--steel);
+  transition: color 0.2s;
+}
+.masthead-nav a:hover { color: var(--rust); }
+
+/* ── HERO ── */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 92vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 2px solid var(--ink);
+  overflow: hidden;
+}
+.hero-left {
+  padding: 6rem 4rem 4rem 4rem;
+  border-right: 1px solid var(--rule);
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 0.7rem;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--rust); margin-bottom: 1.5rem;
+}
+.hero-title {
+  font-family: var(--display); font-size: clamp(2.8rem, 5vw, 5rem);
+  font-weight: 900; line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.hero-title em { font-style: italic; color: var(--rust); }
+.hero-sub {
+  margin-top: 2rem;
+  font-size: 1rem; color: var(--slate);
+  max-width: 38ch; line-height: 1.8;
+}
+.hero-summary {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  max-width: 44rem;
+}
+.hero-chip {
+  border: 1px solid var(--rule);
+  background: rgba(249, 245, 238, 0.9);
+  padding: 0.9rem 1rem;
+}
+.hero-chip-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--steel);
+  margin-bottom: 0.35rem;
+}
+.hero-chip strong {
+  display: block;
+  font-family: var(--display);
+  font-size: 1rem;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.hero-chip p {
+  margin: 0.45rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--slate);
+}
+.hero-meta {
+  display: flex; gap: 2rem;
+  font-family: var(--mono); font-size: 0.65rem;
+  letter-spacing: 0.1em; color: var(--steel);
+  flex-wrap: wrap;
+}
+.hero-meta span { text-transform: uppercase; }
+.hero-meta strong { color: var(--ink); }
+
+.hero-right {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  padding: 3rem;
+}
+.diagram-container {
+  width: 100%; max-width: 520px;
+  animation: fadeUp 1s ease both 0.3s;
+}
+
+/* ── ANIMATED ARCHITECTURE DIAGRAM (SVG-powered) ── */
+.arch-svg { width: 100%; height: auto; }
+
+/* ── RULE DIVIDERS ── */
+.rule { border: none; border-top: 1px solid var(--rule); margin: 0; }
+.rule-thick { border: none; border-top: 2px solid var(--ink); margin: 0; }
+
+/* ── SECTION LAYOUT ── */
+.section {
+  position: relative; z-index: 1;
+  padding: 5rem 4rem;
+  max-width: 1400px; margin: 0 auto;
+}
+.section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+.section-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+
+.section-label {
+  font-family: var(--mono); font-size: 0.65rem;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--steel); margin-bottom: 0.75rem;
+}
+.section-number {
+  font-family: var(--mono); font-size: 0.65rem;
+  color: var(--rule); margin-bottom: 0.5rem;
+}
+.section-h2 {
+  font-family: var(--display); font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 700; line-height: 1.15;
+  letter-spacing: -0.02em; margin-bottom: 1.5rem;
+}
+.section-h2 em { font-style: italic; color: var(--rust); }
+p { margin-bottom: 1.25rem; font-size: 0.98rem; }
+p:last-child { margin-bottom: 0; }
+
+/* ── PULLQUOTE ── */
+.pullquote {
+  border-left: 4px solid var(--rust);
+  padding: 1.25rem 1.75rem;
+  margin: 2rem 0;
+  background: var(--cream);
+}
+.pullquote p {
+  font-family: var(--display); font-style: italic;
+  font-size: 1.2rem; line-height: 1.5;
+  color: var(--slate); margin: 0;
+}
+.pullquote cite {
+  display: block; margin-top: 0.75rem;
+  font-family: var(--mono); font-size: 0.65rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--steel);
+  font-style: normal;
+}
+
+/* ── ARCHITECTURE CARDS ── */
+.arch-card {
+  border: 1px solid var(--rule);
+  padding: 1.75rem;
+  background: var(--pale);
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: default;
+  position: relative; overflow: hidden;
+}
+.arch-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 3px; height: 0;
+  background: var(--rust);
+  transition: height 0.3s ease;
+}
+.arch-card:hover::before { height: 100%; }
+.arch-card:hover { border-color: var(--rust); transform: translateY(-2px); }
+
+.arch-card-tag {
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.5rem;
+}
+.arch-card h3 {
+  font-family: var(--display); font-size: 1.1rem;
+  font-weight: 700; margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+.arch-card p { font-size: 0.88rem; color: var(--slate); margin: 0; }
+
+/* ── EVIDENCE TABLE ── */
+.evidence-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.88rem;
+  margin-top: 1.5rem;
+}
+.evidence-table thead tr {
+  border-bottom: 2px solid var(--ink);
+}
+.evidence-table th {
+  font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--steel); padding: 0.6rem 1rem 0.6rem 0;
+  text-align: left; font-weight: 400;
+}
+.evidence-table td {
+  padding: 0.8rem 1rem 0.8rem 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+.evidence-table tr:last-child td { border-bottom: none; }
+.tag {
+  display: inline-block;
+  font-family: var(--mono); font-size: 0.58rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid currentColor;
+}
+.tag-strong { color: var(--rust); }
+.tag-proto { color: var(--steel); }
+.tag-emerging { color: var(--gold); }
+
+/* ── CHALLENGES GRID ── */
+.challenge-item {
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--rule);
+  display: grid; grid-template-columns: 3rem 1fr; gap: 1.5rem;
+  align-items: start;
+}
+.challenge-item:last-child { border-bottom: none; }
+.challenge-num {
+  font-family: var(--mono); font-size: 0.65rem;
+  color: var(--rust); padding-top: 0.2rem;
+  letter-spacing: 0.05em;
+}
+.challenge-item h3 {
+  font-family: var(--display); font-size: 1.05rem;
+  font-weight: 700; margin-bottom: 0.5rem;
+}
+.challenge-item p { font-size: 0.9rem; color: var(--slate); margin: 0; }
+
+/* ── INTERACTIVE TABS ── */
+.tabs { margin-top: 2rem; }
+.tab-nav {
+  display: flex; gap: 0; border-bottom: 2px solid var(--ink);
+  flex-wrap: wrap;
+}
+.tab-btn {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--mono); font-size: 0.65rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 0.75rem 1.5rem;
+  color: var(--steel); position: relative;
+  transition: color 0.2s;
+}
+.tab-btn.active { color: var(--ink); }
+.tab-btn.active::after {
+  content: ''; position: absolute; bottom: -2px; left: 0;
+  width: 100%; height: 2px;
+  background: var(--rust);
+}
+.tab-btn:hover { color: var(--ink); }
+.tab-panel { display: none; padding: 2rem 0; }
+.tab-panel.active { display: block; }
+.architecture-tabs .tab-nav {
+  gap: 0.6rem;
+  border-bottom: 1px solid var(--rule);
+}
+.architecture-tabs .tab-btn {
+  padding: 0.85rem 1rem;
+  border: 1px solid transparent;
+  border-bottom: none;
+}
+.architecture-tabs .tab-btn.active {
+  background: var(--pale);
+  border-color: var(--rule);
+}
+.architecture-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(240px, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+.architecture-panel h3 {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  line-height: 1.2;
+  margin-bottom: 0.85rem;
+}
+.architecture-panel p {
+  color: var(--slate);
+}
+.read-card,
+.panel-card,
+.kpi-card {
+  border: 1px solid var(--rule);
+  background: var(--pale);
+}
+.read-card {
+  padding: 1.3rem 1.4rem;
+}
+.read-card h3,
+.panel-card h3,
+.kpi-card h3 {
+  font-family: var(--display);
+  font-size: 1.1rem;
+  margin-bottom: 0.55rem;
+}
+.read-card p,
+.panel-card p,
+.kpi-card p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--slate);
+}
+.taxonomy {
+  margin-top: 1.6rem;
+  border-top: 1px solid var(--rule);
+}
+.tax-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.tax-row:last-child {
+  border-bottom: none;
+}
+.tax-row b {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--steel);
+}
+.tax-row span {
+  font-size: 0.9rem;
+  color: var(--slate);
+}
+.legend-note {
+  margin-top: 1.5rem;
+  padding: 1rem 1.2rem;
+  background: var(--cream);
+  border-left: 4px solid var(--rust);
+  font-size: 0.92rem;
+  color: var(--slate);
+}
+.legend-note strong {
+  color: var(--ink);
+}
+.two-up {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.2rem;
+}
+.panel-card {
+  padding: 1.4rem 1.5rem;
+}
+.panel-card ul {
+  list-style: none;
+  margin: 1rem 0 0;
+}
+.panel-card li {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.9rem;
+  color: var(--slate);
+}
+.panel-card li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.panel-card strong {
+  color: var(--ink);
+}
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.kpi-card {
+  padding: 1rem 1.1rem;
+}
+.kpi-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--steel);
+  margin-bottom: 0.45rem;
+}
+
+/* ── PROGRESS BARS ── */
+.metric-row { margin-bottom: 1.25rem; }
+.metric-label {
+  display: flex; justify-content: space-between;
+  font-family: var(--mono); font-size: 0.65rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--steel); margin-bottom: 0.4rem;
+}
+.metric-label strong { color: var(--ink); }
+.bar-track {
+  height: 4px; background: var(--rule);
+  position: relative; overflow: visible;
+}
+.bar-fill {
+  height: 100%;
+  background: var(--rust);
+  width: 0; transition: width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+.bar-fill.animated { width: var(--target); }
+
+/* ── READING PROGRESS ── */
+#progress-bar {
+  position: fixed; top: 0; left: 0; z-index: 1000;
+  height: 3px; width: 0%;
+  background: linear-gradient(90deg, var(--rust), var(--gold));
+  transition: width 0.1s linear;
+}
+
+/* ── TOC SIDEBAR ── */
+.toc {
+  position: sticky; top: 2rem;
+  padding: 1.5rem;
+  border-left: 2px solid var(--ink);
+  font-family: var(--mono); font-size: 0.65rem;
+  letter-spacing: 0.1em;
+}
+.toc-label {
+  text-transform: uppercase; color: var(--steel);
+  margin-bottom: 1rem; font-size: 0.6rem; letter-spacing: 0.2em;
+}
+.toc a {
+  display: block; padding: 0.3rem 0;
+  text-decoration: none; color: var(--slate);
+  transition: color 0.15s;
+  text-transform: uppercase; font-size: 0.6rem;
+}
+.toc a:hover, .toc a.active { color: var(--rust); }
+
+/* ── BODY CONTENT GRID (sidebar layout) ── */
+.content-with-toc {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 5rem;
+  align-items: start;
+  max-width: 1300px; margin: 0 auto;
+  padding: 5rem 4rem;
+  position: relative; z-index: 1;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 2px solid var(--ink);
+  padding: 2.5rem 4rem;
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative; z-index: 1;
+  background: var(--cream);
+}
+footer p {
+  font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--steel); margin: 0;
+}
+footer .footer-brand {
+  font-family: var(--display); font-size: 1.1rem;
+  font-weight: 700; color: var(--ink);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes drawLine {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+@keyframes pulse-node {
+  0%, 100% { opacity: 1; r: 6; }
+  50%       { opacity: 0.7; r: 8; }
+}
+
+.fade-in {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ── HIGHLIGHT INLINE ── */
+mark {
+  background: none; color: var(--rust);
+  font-style: italic;
+}
+code {
+  font-family: var(--mono); font-size: 0.85em;
+  background: var(--cream); padding: 0.1em 0.35em;
+  border-radius: 2px; color: var(--slate);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero-right { display: none; }
+  .hero-left { padding: 4rem 2rem; }
+  .hero-summary { grid-template-columns: 1fr; }
+  .section { padding: 3rem 2rem; }
+  .section-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .section-grid-3 { grid-template-columns: 1fr 1fr; }
+  .architecture-panel,
+  .two-up,
+  .kpi-grid { grid-template-columns: 1fr; }
+  .content-with-toc { grid-template-columns: 1fr; padding: 3rem 2rem; }
+  .toc { display: none; }
+  footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem; }
+  .masthead { padding: 1rem 1.5rem; }
+  .masthead-nav { display: none; }
+}
+@media (max-width: 640px) {
+  .section-grid-3 { grid-template-columns: 1fr; }
+  .hero-title { font-size: 2.4rem; }
+  .tax-row { grid-template-columns: 1fr; gap: 0.35rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- MASTHEAD -->
+<header class="masthead" role="banner">
+  <div class="masthead-logo">Veritas <span>Canvas</span> — Intelligence Brief</div>
+  <nav class="masthead-nav" aria-label="Document navigation">
+    <a href="#definition">Definition</a>
+    <a href="#urgency">Urgency</a>
+    <a href="#architectures">Architectures</a>
+    <a href="#evidence">Evidence</a>
+    <a href="#evaluation">Evaluation</a>
+    <a href="#challenges">Challenges</a>
+    <a href="#agi">AGI Debate</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-heading">
+  <div class="hero-left">
+    <div>
+      <p class="hero-eyebrow">Research Brief · March 2026</p>
+      <h1 id="hero-heading" class="hero-title">
+        Neuro-<em>Symbolic</em><br>AI in 2026
+      </h1>
+      <p class="hero-sub">Architectures, evidence, and the LLM reliability shift. A field guide to how hybrid systems combine learning, explicit structure, and verifiable steps under governance pressure.</p>
+      <div class="hero-summary" aria-label="Quick scan of the page's main claims">
+        <div class="hero-chip">
+          <span class="hero-chip-label">Primary driver</span>
+          <strong>Reliability, not novelty</strong>
+          <p>Governance pressure and hallucination cost matter more than abstract hybrid purity tests.</p>
+        </div>
+        <div class="hero-chip">
+          <span class="hero-chip-label">Best fit</span>
+          <strong>Schema-heavy domains</strong>
+          <p>Clinical extraction, constrained workflows, and auditable pipelines show the clearest value.</p>
+        </div>
+        <div class="hero-chip">
+          <span class="hero-chip-label">Strongest lever</span>
+          <strong>Verification and traceability</strong>
+          <p>The practical upside comes when symbolic steps actually expose checks, traces, or invariants.</p>
+        </div>
+        <div class="hero-chip">
+          <span class="hero-chip-label">Real cost</span>
+          <strong>Inference drag and upkeep</strong>
+          <p>Symbolic runtime and knowledge engineering remain the hardest taxes on deployment.</p>
+        </div>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <span>Updated <strong>March 2026</strong></span>
+      <span>Read <strong>14–18 min</strong></span>
+      <span>Audience <strong>Research · Applied ML · Governance</strong></span>
+    </div>
+  </div>
+  <div class="hero-right" aria-hidden="true">
+    <div class="diagram-container">
+      <!-- ANIMATED ARCHITECTURE SVG -->
+      <svg class="arch-svg" viewBox="0 0 520 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Neuro-symbolic architecture overview diagram">
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#b84a2e"/>
+          </marker>
+          <marker id="arrow-slate" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#6b7f8f"/>
+          </marker>
+        </defs>
+
+        <!-- Background regions -->
+        <rect x="10" y="60" width="220" height="100" rx="4" fill="none" stroke="#3a4a5c" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+        <text x="20" y="77" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#6b7f8f" letter-spacing="1">NEURAL LAYER</text>
+
+        <rect x="10" y="220" width="220" height="100" rx="4" fill="none" stroke="#b84a2e" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+        <text x="20" y="237" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#b84a2e" letter-spacing="1">SYMBOLIC LAYER</text>
+
+        <rect x="290" y="60" width="220" height="260" rx="4" fill="none" stroke="#c9952a" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+        <text x="300" y="77" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#c9952a" letter-spacing="1">INTEGRATION &amp; OUTPUT</text>
+
+        <!-- Neural nodes -->
+        <circle cx="80" cy="130" r="22" fill="#f5f0e8" stroke="#3a4a5c" stroke-width="2"/>
+        <text x="80" y="126" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#3a4a5c">DEEP</text>
+        <text x="80" y="136" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#3a4a5c">NETS</text>
+
+        <circle cx="165" cy="130" r="22" fill="#f5f0e8" stroke="#3a4a5c" stroke-width="2"/>
+        <text x="165" y="126" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#3a4a5c">LLM</text>
+        <text x="165" y="136" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#3a4a5c">EMBED</text>
+
+        <!-- Symbolic nodes -->
+        <rect x="55" y="258" width="52" height="44" rx="3" fill="#f5f0e8" stroke="#b84a2e" stroke-width="2"/>
+        <text x="81" y="277" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#b84a2e">LOGIC /</text>
+        <text x="81" y="287" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#b84a2e">RULES</text>
+        <text x="81" y="297" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#b84a2e">PROOFS</text>
+
+        <rect x="140" y="258" width="52" height="44" rx="3" fill="#f5f0e8" stroke="#b84a2e" stroke-width="2"/>
+        <text x="166" y="277" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#b84a2e">KG /</text>
+        <text x="166" y="287" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#b84a2e">SCHEMAS</text>
+        <text x="166" y="297" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#b84a2e">TOOLS</text>
+
+        <!-- Integration nodes -->
+        <rect x="310" y="120" width="80" height="44" rx="3" fill="#f5f0e8" stroke="#c9952a" stroke-width="2"/>
+        <text x="350" y="139" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#c9952a">HYBRID</text>
+        <text x="350" y="149" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#c9952a">INFERENCE</text>
+
+        <rect x="310" y="210" width="80" height="44" rx="3" fill="#f5f0e8" stroke="#c9952a" stroke-width="2"/>
+        <text x="350" y="229" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#c9952a">VERIFIER /</text>
+        <text x="350" y="239" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#c9952a">CONSTRAINT</text>
+
+        <!-- Output -->
+        <rect x="420" y="155" width="70" height="44" rx="3" fill="#b84a2e" stroke="none"/>
+        <text x="455" y="174" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#f5f0e8">AUDITABLE</text>
+        <text x="455" y="184" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#f5f0e8">OUTPUT</text>
+
+        <!-- Flow lines: neural → integration -->
+        <line x1="102" y1="130" x2="305" y2="140" stroke="#3a4a5c" stroke-width="1.5" marker-end="url(#arrow-slate)" stroke-dasharray="5,3">
+          <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="187" y1="130" x2="305" y2="137" stroke="#3a4a5c" stroke-width="1.5" marker-end="url(#arrow-slate)" stroke-dasharray="5,3">
+          <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" begin="0.3s" repeatCount="indefinite"/>
+        </line>
+
+        <!-- Symbolic → verifier -->
+        <line x1="107" y1="280" x2="305" y2="232" stroke="#b84a2e" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="5,3">
+          <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+        </line>
+        <line x1="192" y1="280" x2="305" y2="228" stroke="#b84a2e" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="5,3">
+          <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" begin="0.7s" repeatCount="indefinite"/>
+        </line>
+
+        <!-- Integration → output -->
+        <line x1="390" y1="142" x2="416" y2="170" stroke="#c9952a" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="390" y1="232" x2="416" y2="185" stroke="#c9952a" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+        <!-- Bridge neural ↔ symbolic -->
+        <line x1="120" y1="152" x2="110" y2="258" stroke="#0d0d0d" stroke-width="1" opacity="0.2" stroke-dasharray="3,3"/>
+        <text x="238" y="200" font-family="'Libre Baskerville',serif" font-size="9" fill="#0d0d0d" opacity="0.35" font-style="italic">System 1 / 2</text>
+
+        <!-- Input label -->
+        <text x="40" y="42" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#6b7f8f">RAW DATA / LANGUAGE</text>
+        <line x1="80" y1="48" x2="80" y2="107" stroke="#6b7f8f" stroke-width="1.5" marker-end="url(#arrow-slate)"/>
+        <line x1="165" y1="48" x2="165" y2="107" stroke="#6b7f8f" stroke-width="1.5" marker-end="url(#arrow-slate)"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<hr class="rule-thick">
+
+<!-- MAIN CONTENT + TOC -->
+<div class="content-with-toc">
+  <main>
+
+    <!-- §1 DEFINITION -->
+    <article id="definition" class="fade-in">
+      <p class="section-label section-number">01 — Foundation</p>
+      <h2 class="section-h2">What Neuro-Symbolic AI Is — and Why the <em>Definition Is Slippery</em></h2>
+      <p>Neuro-symbolic AI (NeSy) refers to approaches that combine <mark>neural learning</mark> — deep nets, embeddings, foundation models — with <mark>symbolic machinery</mark> such as logic, rules, structured knowledge, programs, theorem proving, and constraint solving. The goal is systems that can both learn from data and reason with explicit structure.</p>
+      <p>A core theme across modern surveys is that NeSy is not one architecture but a <strong>family of design patterns</strong> for integrating learning and reasoning. Two important clarifications shape current research debates.</p>
+
+      <div class="pullquote">
+        <p>"Symbolic" is broader than formal logic. In LLM-era discourse, symbolic components can include knowledge graphs, typed schemas, constraints, tool calls, planners, and verifiers — not only first-order logic and theorem proving.</p>
+      </div>
+
+      <p>The "why" behind NeSy is also not simply explainability. Many papers position the goal as a <strong>three-way trade</strong> among accuracy/generalization, transparency/traceability, and robustness under distribution shift and missing data. This framing is explicit in "third wave" arguments and in survey work that characterizes NeSy systems along dimensions of inference style, semantics, and learning scope.</p>
+
+      <div class="tabs" role="tablist" aria-label="Definition perspectives">
+        <div class="tab-nav">
+          <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-metaphor" id="btn-metaphor" onclick="switchTab(this,'tab-metaphor')">Cognitive Metaphor</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-goals" id="btn-goals" onclick="switchTab(this,'tab-goals')">Three-Way Trade</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-scope" id="btn-scope" onclick="switchTab(this,'tab-scope')">Scope of "Symbolic"</button>
+        </div>
+        <div id="tab-metaphor" class="tab-panel active" role="tabpanel">
+          <p>A common cognitive metaphor describes neural components as <strong>fast pattern recognition</strong> and symbolic components as <strong>slower deliberation</strong> — mapped to "System 1 / System 2" language from dual process theory (Kahneman). Researchers caution, however, that dual process theory is itself a family of models rather than a single precise mechanism. The metaphor is useful for communication but should not be taken as a structural specification.</p>
+        </div>
+        <div id="tab-goals" class="tab-panel" role="tabpanel">
+          <p>Survey literature consistently identifies a three-part value proposition for NeSy:</p>
+          <div class="metric-row"><div class="metric-label"><span>Accuracy / Generalization</span><strong>Goal A</strong></div><div class="bar-track"><div class="bar-fill" style="--target:78%"></div></div></div>
+          <div class="metric-row"><div class="metric-label"><span>Transparency / Traceability</span><strong>Goal B</strong></div><div class="bar-track"><div class="bar-fill" style="--target:91%"></div></div></div>
+          <div class="metric-row"><div class="metric-label"><span>Robustness Under Shift</span><strong>Goal C</strong></div><div class="bar-track"><div class="bar-fill" style="--target:65%"></div></div></div>
+          <p style="font-size:0.8rem; color:var(--steel); margin-top:1rem;">Bars indicate relative emphasis in published survey framing, not empirical scores.</p>
+        </div>
+        <div id="tab-scope" class="tab-panel" role="tabpanel">
+          <p>The term "symbolic" in 2026 covers a wider surface than classical AI assumed. Components that now qualify include: first-order logic and theorem provers, probabilistic logic programs (ProbLog, DeepProbLog), knowledge graphs and ontologies, typed schemas and constraints, external tool calls (calculators, search APIs), program synthesis, structured planners and schedulers, and verifier modules that check output consistency. This breadth explains why the term's boundaries remain contested.</p>
+        </div>
+      </div>
+    </article>
+
+    <hr class="rule" style="margin:4rem 0">
+
+    <!-- §2 URGENCY -->
+    <article id="urgency" class="fade-in">
+      <p class="section-label section-number">02 — Context</p>
+      <h2 class="section-h2">Why the LLM Era Made NeSy Feel <em>Urgent</em></h2>
+      <p>From 2024 to 2026, NeSy work shifted from academic niche to an answer for a concrete production problem: <mark>reliability</mark> in generative systems — factual errors, contradictions, and brittle reasoning. Three distinct drivers accelerated this transition.</p>
+
+      <div class="section-grid" style="margin-top:2.5rem;">
+        <div>
+          <div class="arch-card fade-in">
+            <p class="arch-card-tag">Driver 01 — Governance</p>
+            <h3>Regulatory Pressure</h3>
+            <p>The EU AI Act imposes strict obligations on high-risk systems: logging, documentation, human oversight, robustness, and accuracy requirements. It also introduces transparency obligations — for example, informing users when interacting with chatbots and labeling AI-generated content. U.S. NIST Generative AI Profile guidance addresses risks from lack of explainability through documentation and evaluation practices.</p>
+          </div>
+        </div>
+        <div>
+          <div class="arch-card fade-in">
+            <p class="arch-card-tag">Driver 02 — Engineering</p>
+            <h3>Hallucination Problem</h3>
+            <p>Research attention on hallucination mitigation is visible in surveys focused on retrieval and structured external knowledge, work analyzing whether knowledge graphs reduce hallucinations, and NeSy-for-LLMs research that turns logical requirements into training objectives — such as "Logically Consistent Language Models via Neuro-Symbolic Integration."</p>
+          </div>
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <div class="arch-card fade-in">
+            <p class="arch-card-tag">Driver 03 — Enterprise</p>
+            <h3>Industry Narrative Shift</h3>
+            <p>Gartner's 2025 materials emphasize a pivot away from GenAI-as-hype toward foundational enablers, explicitly discussing governance challenges as part of the scaling story. Third-party coverage increasingly places "neuro-symbolic" inside "composite AI" framing. Treat these as directional signals rather than formal technical validation.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr class="rule" style="margin:4rem 0">
+
+    <!-- §3 ARCHITECTURES -->
+    <article id="architectures" class="fade-in">
+      <p class="section-label section-number">03 — Technical</p>
+      <h2 class="section-h2">Architecture Families: Where <em>"The Symbolic"</em> Actually Lives</h2>
+      <p>Modern NeSy can be understood by <strong>where the symbolic component enters the pipeline</strong>. A 2025 roadmap paper proposes a modular five-stage symbolic integration framework: preprocessing → neural-symbolic embedding → domain knowledge incorporation → logical reasoning modules → symbolic postprocessing. Architectures grounded in formal logic maximize precision and verifiability; more representational symbolic languages increase flexibility and interpretability.</p>
+
+      <div class="tabs architecture-tabs" style="margin-top:2.5rem;">
+        <div class="tab-nav" role="tablist" aria-label="Architecture families">
+          <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="arch-panel-1" id="arch-tab-1" onclick="switchTab(this,'arch-panel-1')">Differentiable logic</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="arch-panel-2" id="arch-tab-2" onclick="switchTab(this,'arch-panel-2')">Neural theorem proving</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="arch-panel-3" id="arch-tab-3" onclick="switchTab(this,'arch-panel-3')">Probabilistic logic</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="arch-panel-4" id="arch-tab-4" onclick="switchTab(this,'arch-panel-4')">Program and object centric</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="arch-panel-5" id="arch-tab-5" onclick="switchTab(this,'arch-panel-5')">LLM symbolic scaffolding</button>
+        </div>
+
+        <div id="arch-panel-1" class="tab-panel architecture-panel active" role="tabpanel" aria-labelledby="arch-tab-1">
+          <div>
+            <h3>Differentiable logic and fuzzy semantics</h3>
+            <p>Logic-like operators are embedded directly into the learning setup so constraints and reasoning signals can be optimized through gradients. This is the family most associated with <strong>Logic Tensor Networks</strong> and <strong>Logical Neural Networks</strong>, where rules, thresholds, and fuzzy semantics are tied to trainable components rather than bolted on afterward.</p>
+            <p>This is usually the cleanest answer when a team wants neural learning and symbolic guidance to shape each other inside one optimization loop.</p>
+            <div class="taxonomy">
+              <div class="tax-row"><b>Best for</b><span>Injecting constraints during training, rule-aware prediction, and interpretable thresholds.</span></div>
+              <div class="tax-row"><b>Strength</b><span>Tight coupling between learned representations and symbolic guidance.</span></div>
+              <div class="tax-row"><b>Trade-off</b><span>Semantics can become fuzzy enough that formal guarantees weaken.</span></div>
+              <div class="tax-row"><b>Representative systems</b><span>Logic Tensor Networks, Logical Neural Networks.</span></div>
+            </div>
+          </div>
+          <aside class="read-card">
+            <h3>Read it as</h3>
+            <p>A neural model with logic-flavored rails built directly into the optimization loop.</p>
+          </aside>
+        </div>
+
+        <div id="arch-panel-2" class="tab-panel architecture-panel" role="tabpanel" aria-labelledby="arch-tab-2">
+          <div>
+            <h3>Neural theorem proving and differentiable proof search</h3>
+            <p>These systems preserve the feel of symbolic backward chaining, but brittle steps like unification are relaxed into similarity over embeddings. The result is proof-like behavior with learned representations and traceable reasoning structure.</p>
+            <p>The attraction is obvious: closer alignment with classical symbolic reasoning than most hybrids. The cost is equally obvious: proof search explodes as knowledge bases grow.</p>
+            <div class="taxonomy">
+              <div class="tax-row"><b>Best for</b><span>Structured relational reasoning where proof traces matter.</span></div>
+              <div class="tax-row"><b>Strength</b><span>Closer to classical symbolic behavior than many other NeSy families.</span></div>
+              <div class="tax-row"><b>Trade-off</b><span>Search cost becomes a major scalability bottleneck fast.</span></div>
+              <div class="tax-row"><b>Representative systems</b><span>End-to-end differentiable theorem proving, Prolog-like proof-search hybrids.</span></div>
+            </div>
+          </div>
+          <aside class="read-card">
+            <h3>Read it as</h3>
+            <p>A differentiable approximation of symbolic “show your work” proving.</p>
+          </aside>
+        </div>
+
+        <div id="arch-panel-3" class="tab-panel architecture-panel" role="tabpanel" aria-labelledby="arch-tab-3">
+          <div>
+            <h3>Probabilistic logic programming with neural predicates</h3>
+            <p>This family treats rules and uncertainty as first-class parts of the same system. Perception is delegated to neural modules, while symbolic logic handles uncertain structured inference. <strong>DeepProbLog</strong> is the usual reference point because it makes “rules plus uncertainty plus learned perception” a coherent programming model.</p>
+            <p>It is especially attractive when a system has fuzzy inputs but clear downstream rules that still need to respect uncertainty.</p>
+            <div class="taxonomy">
+              <div class="tax-row"><b>Best for</b><span>Perception-heavy tasks whose downstream decisions still follow explicit rules.</span></div>
+              <div class="tax-row"><b>Strength</b><span>Clean vocabulary for combining learned predicates with symbolic inference.</span></div>
+              <div class="tax-row"><b>Trade-off</b><span>Inference cost can dominate runtime long before a system reaches production scale.</span></div>
+              <div class="tax-row"><b>Representative systems</b><span>DeepProbLog and broader Statistical Relational AI hybrids.</span></div>
+            </div>
+          </div>
+          <aside class="read-card">
+            <h3>Read it as</h3>
+            <p>A logic program that hands ambiguous perception subproblems to trainable neural components.</p>
+          </aside>
+        </div>
+
+        <div id="arch-panel-4" class="tab-panel architecture-panel" role="tabpanel" aria-labelledby="arch-tab-4">
+          <div>
+            <h3>Program- and object-centric reasoning</h3>
+            <p>These systems emphasize systematic generalization over objects, relations, and compositional rules. The goal is to learn structure on smaller tasks and transfer it to larger combinatorial settings without losing relational discipline.</p>
+            <p><strong>Neural Logic Machines</strong> are a canonical example: they combine neural function approximation with logic programming constructs over objects, relations, and quantifiers to push beyond narrow memorization.</p>
+            <div class="taxonomy">
+              <div class="tax-row"><b>Best for</b><span>Relational tasks with combinatorial growth and strong object structure.</span></div>
+              <div class="tax-row"><b>Strength</b><span>Good fit for “learn a rule once, apply it many ways.”</span></div>
+              <div class="tax-row"><b>Trade-off</b><span>Strong structured-task performance does not automatically transfer to open-world settings.</span></div>
+              <div class="tax-row"><b>Representative systems</b><span>Neural Logic Machines and related relational generalization architectures.</span></div>
+            </div>
+          </div>
+          <aside class="read-card">
+            <h3>Read it as</h3>
+            <p>A relational engine trying to preserve systematic reasoning behavior as scale changes.</p>
+          </aside>
+        </div>
+
+        <div id="arch-panel-5" class="tab-panel architecture-panel" role="tabpanel" aria-labelledby="arch-tab-5">
+          <div>
+            <h3>LLM-era symbolic scaffolding</h3>
+            <p>This is the most common real-world pattern. The symbolic layer often lives outside the base model as graph retrieval, schemas, planners, tool calls, validators, or post-generation checkers. <strong>GraphRAG</strong> and <strong>Toolformer</strong> sit here conceptually, even though their guarantees are much looser than formal reasoning systems.</p>
+            <p>Commercial momentum sits in this family because it is modular and easier to deploy around existing LLM stacks. The catch is that symbolic-looking pipelines are not automatically verifiable.</p>
+            <div class="taxonomy">
+              <div class="tax-row"><b>Best for</b><span>Production systems that need external knowledge, structured workflows, and controllable tool use.</span></div>
+              <div class="tax-row"><b>Strength</b><span>Practical, composable, and easy to ship around an existing model stack.</span></div>
+              <div class="tax-row"><b>Trade-off</b><span>Without explicit verification, failures can still stay silent behind polished tooling.</span></div>
+              <div class="tax-row"><b>Representative systems</b><span>GraphRAG, tool-using LLM agents, planner-validator pipelines, schema-first post-checkers.</span></div>
+            </div>
+          </div>
+          <aside class="read-card">
+            <h3>Read it as</h3>
+            <p>An LLM surrounded by structured memory, tools, and guardrails that move critical steps outside pure next-token prediction.</p>
+          </aside>
+        </div>
+      </div>
+
+      <div class="legend-note">
+        <strong>Reliability lens.</strong> The closer the symbolic layer is to explicit verification, the stronger the traceability. The closer it is to loose scaffolding, the easier it is to ship. That verifiability gap is the central caveat behind many modern “neuro-symbolic” claims.
+      </div>
+    </article>
+
+    <hr class="rule" style="margin:4rem 0">
+
+    <!-- §4 EVIDENCE -->
+    <article id="evidence" class="fade-in">
+      <p class="section-label section-number">04 — Applications</p>
+      <h2 class="section-h2">Where NeSy Is Producing <em>Measurable Gains</em></h2>
+      <p>The application story is mixed. The most credible evidence appears where (a) there is a well-defined schema or ontology, (b) auditability matters, and (c) constraints are naturally expressible. Several domains still resemble prototypes.</p>
+
+      <table class="evidence-table" style="margin-top:2rem;">
+        <thead>
+          <tr>
+            <th>Domain</th>
+            <th>Evidence Type</th>
+            <th>Key Claim</th>
+            <th>Confidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Clinical Information Extraction</strong></td>
+            <td>Peer-reviewed (Comms. Medicine, 2025)</td>
+            <td>Neuro-symbolic system outperforms GPT-4 alone on specific extraction tasks; provides auditable chain of reasoning for trustworthy clinical research workflows</td>
+            <td><span class="tag tag-strong">Strong</span></td>
+          </tr>
+          <tr>
+            <td><strong>Diagnosis Prediction</strong></td>
+            <td>Case study (LNN-based)</td>
+            <td>Integrates domain rules with learnable thresholds, preserving interpretability while maintaining competitive predictive performance (diabetes case study)</td>
+            <td><span class="tag tag-emerging">Emerging</span></td>
+          </tr>
+          <tr>
+            <td><strong>Drug Discovery</strong></td>
+            <td>Research papers</td>
+            <td>Combines knowledge graphs plus rule-weight learning for mechanism-of-action reasoning (MoA deconvolution) with interpretability claims grounded in explicit rule structures</td>
+            <td><span class="tag tag-emerging">Emerging</span></td>
+          </tr>
+          <tr>
+            <td><strong>E-commerce (Amazon Rufus)</strong></td>
+            <td>Vendor narrative / press</td>
+            <td>WSJ framing: neurosymbolic approach powering shopping assistant and warehouse robotics (Vulcan). Full technical details not publicly disclosed.</td>
+            <td><span class="tag tag-proto">Signal Only</span></td>
+          </tr>
+          <tr>
+            <td><strong>Warehouse Robotics</strong></td>
+            <td>Vendor press materials</td>
+            <td>Amazon Vulcan: tactile-sensing system for warehouse manipulation. Described in internal materials; interpret as directional, not verified research claim.</td>
+            <td><span class="tag tag-proto">Signal Only</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pullquote" style="margin-top:2.5rem;">
+        <p>The most credible NeSy gains come where there is a well-defined ontology, auditability requirements, and naturally expressible constraints — not wherever "hybrid" appears in marketing copy.</p>
+        <cite>— Synthesized from 2025–2026 survey literature</cite>
+      </div>
+    </article>
+
+    <hr class="rule" style="margin:4rem 0">
+
+    <!-- §5 EVALUATION -->
+    <article id="evaluation" class="fade-in">
+      <p class="section-label section-number">05 — Measurement</p>
+      <h2 class="section-h2">Evaluation: What <em>"Success"</em> Should Mean</h2>
+      <p>A recurring theme in recent surveys is that NeSy evaluation practices remain uneven. A 2026 task-directed survey notes reproducibility issues, inconsistencies across benchmarks even with the same black-box baselines, and a trend toward toy tasks tailored to new methods — warning that such tasks are often unsuitable for broad comparisons. Four measurable dimensions now define rigorous evaluation.</p>
+
+      <div class="two-up">
+        <article class="panel-card">
+          <p class="arch-card-tag">Operator checklist</p>
+          <h3>Core checklist</h3>
+          <ul>
+            <li><strong>Constraint satisfaction:</strong> measure how often outputs violate rules, schemas, invariants, or factual requirements.</li>
+            <li><strong>Auditability:</strong> verify that the system can surface meaningful traces such as rules fired, graph paths, proof steps, or verification outcomes.</li>
+            <li><strong>Robustness:</strong> test behavior under missing evidence, perturbations, and edge cases where pure neural systems often fail quietly.</li>
+            <li><strong>Cost and latency:</strong> confirm that symbolic overhead does not erase the business value of better failure behavior.</li>
+          </ul>
+        </article>
+        <article class="panel-card">
+          <p class="arch-card-tag">Failure modes</p>
+          <h3>What teams get wrong</h3>
+          <ul>
+            <li>Benchmarking only on toy tasks designed around a method instead of real operational failure cases.</li>
+            <li>Calling a system interpretable just because it contains rules, even when the neural-to-symbolic mapping is weak.</li>
+            <li>Ignoring runtime overhead until the system is already hitting production scale or tight SLAs.</li>
+            <li>Confusing retrieval, tools, or structured prompting with full formal verification.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="kpi-grid" aria-label="Suggested NeSy evaluation dimensions">
+        <article class="kpi-card">
+          <span class="kpi-label">E.1</span>
+          <h3>Logical consistency</h3>
+          <p>Track contradiction rate, rule violations, and invariant failures.</p>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">E.2</span>
+          <h3>Trace quality</h3>
+          <p>Assess whether traces are meaningful enough for debugging, audit, and compliance review.</p>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">E.3</span>
+          <h3>Shift robustness</h3>
+          <p>Measure behavior under sparse evidence, perturbations, and role-specific edge cases.</p>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">E.4</span>
+          <h3>Decisions per dollar</h3>
+          <p>Relate reliability gains to inference cost, symbolic runtime, and operational complexity.</p>
+        </article>
+      </div>
+
+      <div class="legend-note">
+        <strong>Reliability lens.</strong> Accuracy alone is not the right scoreboard. In practice, the useful question is whether a neuro-symbolic system delivers fewer bad failures, better traces, and acceptable cost under real deployment pressure.
+      </div>
+    </article>
+
+    <hr class="rule" style="margin:4rem 0">
+
+    <!-- §6 CHALLENGES -->
+    <article id="challenges" class="fade-in">
+      <p class="section-label section-number">06 — Blockers</p>
+      <h2 class="section-h2">Open Challenges Blocking <em>"NeSy Everywhere"</em></h2>
+
+      <div style="margin-top:1.5rem;">
+        <div class="challenge-item">
+          <span class="challenge-num">01</span>
+          <div>
+            <h3>Scalability</h3>
+            <p>The most persistent technical challenge appears in multiple forms: proof search explosion in neural theorem proving, expensive probabilistic inference in logic programming hybrids, and general symbolic workload overhead in system-level profiling. Real-time performance is often unmet in representative benchmarks on commodity hardware.</p>
+          </div>
+        </div>
+        <div class="challenge-item">
+          <span class="challenge-num">02</span>
+          <div>
+            <h3>Knowledge Acquisition</h3>
+            <p>NeSy systems often assume clean ontologies, high-quality rule sets, or curated graphs — expensive to build and maintain, brittle when domain concepts evolve. The survey literature repeatedly frames NeSy as an integration problem across representation, semantics, and learning scope, which is exactly where knowledge engineering costs show up.</p>
+          </div>
+        </div>
+        <div class="challenge-item">
+          <span class="challenge-num">03</span>
+          <div>
+            <h3>LLM-to-Symbolic Translation Instability</h3>
+            <p>Turning free-form natural language into reliable logic constraints, executable programs, or trustworthy graph updates is still error-prone. This is why some NeSy-for-LLM approaches prefer training objectives that enforce constraints statistically rather than relying on perfect explicit parsing at runtime.</p>
+          </div>
+        </div>
+        <div class="challenge-item">
+          <span class="challenge-num">04</span>
+          <div>
+            <h3>Interpretability Is Not Automatic</h3>
+            <p>Adding rules can increase transparency only if the symbolic layer is understandable and the mapping between neural representations and symbolic artifacts is faithful. "Hybrid" systems can accumulate new failure modes: mis-specified constraints, misleading explanations, partial traceability. Interpretability claims vary widely across approaches — a fact reflected in mainstream science coverage noting the blurry definitional boundaries.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr class="rule" style="margin:4rem 0">
+
+    <!-- §7 AGI DEBATE -->
+    <article id="agi" class="fade-in">
+      <p class="section-label section-number">07 — Strategic Context</p>
+      <h2 class="section-h2">The AGI Debate: What NeSy Does — and Does <em>Not</em> — Settle</h2>
+      <p>NeSy sits near the center of the "what's missing?" debate around general intelligence, but it does not resolve it.</p>
+
+      <div class="section-grid" style="margin-top:2rem;">
+        <div>
+          <div class="pullquote">
+            <p>Progress toward robust general intelligence will require hybrid architectures, rich prior knowledge, and sophisticated techniques for reasoning — the triumvirate of prerequisites for constructing rich cognitive models.</p>
+            <cite>— Gary Marcus, 2020 (paraphrase)</cite>
+          </div>
+          <p style="margin-top:1.5rem;">Critics of pure deep learning argue that NeSy provides essential missing pieces. Marcus's "triumvirate" framing — hybrid architecture, rich prior knowledge, sophisticated reasoning — remains influential in structuring what NeSy claims to offer.</p>
+        </div>
+        <div>
+          <p>Even sympathetic coverage stresses that "neuro-symbolic" is a broad label and no consensus architecture obviously scales to open-world generality. The field currently shows many specialized hybrids optimized for particular constraints and evaluation regimes.</p>
+
+          <div class="arch-card" style="margin-top:1.5rem; border-color:var(--gold);">
+            <p class="arch-card-tag" style="color:var(--gold);">Strategic Assessment · 2026</p>
+            <h3>A Design Discipline, Not a Road to AGI</h3>
+            <p>NeSy in 2026 is less a single road to general intelligence and more a <strong>design discipline</strong>: it gives engineers structured ways to combine (1) learning, (2) explicit knowledge, and (3) verifiable steps — especially under governance and reliability demands. That discipline maps cleanly to near-term deployment needs even if the long-run AGI question remains open.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <!-- SIDEBAR TOC -->
+  <aside aria-label="Table of contents">
+    <nav class="toc" aria-label="Page sections">
+      <p class="toc-label">Contents</p>
+      <a href="#definition" class="toc-link">01 · Definition</a>
+      <a href="#urgency" class="toc-link">02 · Urgency</a>
+      <a href="#architectures" class="toc-link">03 · Architectures</a>
+      <a href="#evidence" class="toc-link">04 · Evidence</a>
+      <a href="#evaluation" class="toc-link">05 · Evaluation</a>
+      <a href="#challenges" class="toc-link">06 · Challenges</a>
+      <a href="#agi" class="toc-link">07 · AGI Debate</a>
+    </nav>
+  </aside>
+</div>
+
+<hr class="rule-thick">
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="footer-brand">Veritas Canvas</div>
+  <p>Research Brief — Neuro-Symbolic AI in 2026<br>Architectures, Evidence &amp; the LLM Reliability Shift</p>
+  <p>Strategic &amp; Technical Analysis · Compiled 2026</p>
+</footer>
+
+<script>
+// ── READING PROGRESS ──
+const progressBar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  progressBar.style.width = pct + '%';
+});
+
+// ── INTERSECTION OBSERVER: FADE-IN ──
+const fadeEls = document.querySelectorAll('.fade-in');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // animate bars when visible
+      e.target.querySelectorAll('.bar-fill').forEach(b => b.classList.add('animated'));
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+fadeEls.forEach(el => observer.observe(el));
+
+// ── TOC ACTIVE STATE ──
+const sections = document.querySelectorAll('article[id]');
+const tocLinks = document.querySelectorAll('.toc-link');
+const tocObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      tocLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.toc-link[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => tocObserver.observe(s));
+
+// ── TABS ──
+function switchTab(btn, panelId) {
+  const allBtns = btn.closest('.tab-nav').querySelectorAll('.tab-btn');
+  const allPanels = btn.closest('.tabs').querySelectorAll('.tab-panel');
+  allBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+  allPanels.forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected','true');
+  const panel = document.getElementById(panelId);
+  if (panel) {
+    panel.classList.add('active');
+    panel.querySelectorAll('.bar-fill').forEach(b => {
+      b.classList.remove('animated');
+      requestAnimationFrame(() => requestAnimationFrame(() => b.classList.add('animated')));
+    });
+  }
+}
+
+// ── KEYBOARD NAV FOR TABS ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('keydown', e => {
+    const nav = btn.closest('.tab-nav');
+    const btns = [...nav.querySelectorAll('.tab-btn')];
+    const idx = btns.indexOf(btn);
+    if (e.key === 'ArrowRight') { btns[(idx+1)%btns.length].click(); btns[(idx+1)%btns.length].focus(); }
+    if (e.key === 'ArrowLeft')  { btns[(idx-1+btns.length)%btns.length].click(); btns[(idx-1+btns.length)%btns.length].focus(); }
+  });
+});
+</script>
+
+</body>
+</html>
